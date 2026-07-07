@@ -2,7 +2,7 @@
 
 _Draft features grouped into milestones in dependency order. Each feature is sized ~15–45 min of worker time and lists the assertion IDs it covers. Features are drafts; `/mission-tasks` enriches each with 20 clarification answers before `/mission-run`. Per-feature spec files are materialized under `features/F<NNN>-*.md` during `/mission-tasks`._
 
-**Totals:** 15 milestones · 76 features · 104 assertions · coverage 100%.
+**Totals:** 15 milestones · 84 features · 104 assertions · coverage 100%.
 
 Status tags used later: `[CLARIFIED]`, `[CLARIFIED-AUTO]`, `[SKIPPED]`, `[COMPLETE]`.
 
