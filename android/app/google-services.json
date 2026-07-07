@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1037703891646",
+    "project_id": "sportin-clone",
+    "storage_bucket": "sportin-clone.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037703891646:android:f36fc33a72d71feeeaacef",
+        "android_client_info": {
+          "package_name": "app.sportin.sportin_clone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCO_W2XX6w9p7O_xjcDlmJ1wojsnFijULA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

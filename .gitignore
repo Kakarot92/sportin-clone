@@ -35,3 +35,36 @@ __pycache__/
 
 # NOTE: do NOT ignore `missions/` in general — mission state IS the project's
 # documentation. Only the verify/ subdirectory is excluded.
+
+# --- FLUTTER / DART ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+**/doc/api/
+*.iml
+.gitignore.fw.bak
+
+# --- ANDROID ---
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/key.properties
+*.jks
+
+# --- iOS / XCODE ---
+**/ios/**/*.mode1v3
+**/ios/**/*.pbxuser
+**/ios/Flutter/App.framework
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Flutter/Generated.xcconfig
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Podfile.lock
+**/ios/Pods/
