@@ -102,3 +102,13 @@ dart analyze
 - **Errors/logging:** user-friendly messages in UI; technical errors to Crashlytics; key funnel events to Analytics.
 - **Time zones:** store timestamps in UTC; render in the studio's local time (Europe/Belgrade).
 - **Testing:** every core flow (auth, booking, cancellation, measurements) gets unit/widget tests; workers must keep `flutter test` and `flutter analyze` green before exit.
+
+## Design handoff
+
+Discovery Q13 = "client provides designs." Timing (non-blocking for approval/connect):
+
+- **Early (any time before `/mission-run` UI work):** brand foundation — colors (hex), font, logo, light/dark palette. Feeds the theme (F004/F132) and dashboard/shell look.
+- **Per screen (before or during `/mission-run` for each feature):** mockups for login, choose-trainer, slot calendar, booking, measurements + charts, chat, admin.
+- **Accepted formats:** Figma link, screenshots/images, or a style-guide (hex + font + spacing) plus references to specific sportIN screens to emulate.
+- **Fallback if design is late:** workers implement a clean Material 3 baseline against the chosen light/dark theme, to be re-skinned when designs arrive.
+- **Status:** _not yet received — awaiting brand foundation from client._
