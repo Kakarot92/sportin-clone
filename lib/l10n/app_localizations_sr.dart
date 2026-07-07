@@ -80,4 +80,115 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get languageEnglish => 'Engleski';
+
+  @override
+  String get loginTitle => 'Prijava';
+
+  @override
+  String get signupTitle => 'Kreiranje naloga';
+
+  @override
+  String get resetTitle => 'Reset lozinke';
+
+  @override
+  String get emailLabel => 'Email';
+
+  @override
+  String get passwordLabel => 'Lozinka';
+
+  @override
+  String get displayNameLabel => 'Ime i prezime';
+
+  @override
+  String get phoneLabel => 'Telefon';
+
+  @override
+  String get loginButton => 'Prijavi se';
+
+  @override
+  String get signupButton => 'Napravi nalog';
+
+  @override
+  String get resetButton => 'Pošalji link za reset';
+
+  @override
+  String get noAccountPrompt => 'Nemaš nalog? Napravi ga';
+
+  @override
+  String get haveAccountPrompt => 'Već imaš nalog? Prijavi se';
+
+  @override
+  String get forgotPassword => 'Zaboravljena lozinka?';
+
+  @override
+  String get resetSent =>
+      'Ako je taj email registrovan, poslali smo link za reset.';
+
+  @override
+  String get consentLabel =>
+      'Saglasan/na sam sa obradom mojih zdravstvenih i telesnih podataka i prihvatam uslove korišćenja.';
+
+  @override
+  String get consentRequired => 'Morate prihvatiti uslove da biste nastavili.';
+
+  @override
+  String get validationRequired => 'Obavezno polje.';
+
+  @override
+  String get validationEmailInvalid => 'Unesite ispravnu email adresu.';
+
+  @override
+  String get validationPasswordShort =>
+      'Lozinka mora imati najmanje 6 karaktera.';
+
+  @override
+  String get errorEmailInUse => 'Ovaj email je već registrovan.';
+
+  @override
+  String get errorInvalidEmail => 'Email adresa nije ispravna.';
+
+  @override
+  String get errorWrongCredentials => 'Pogrešan email ili lozinka.';
+
+  @override
+  String get errorWeakPassword => 'Lozinka je previše slaba.';
+
+  @override
+  String get errorTooManyRequests => 'Previše pokušaja. Pokušajte kasnije.';
+
+  @override
+  String get errorNetwork => 'Greška u mreži. Proverite konekciju.';
+
+  @override
+  String get errorGeneric => 'Došlo je do greške. Pokušajte ponovo.';
+
+  @override
+  String get accountSection => 'Nalog';
+
+  @override
+  String get profileRole => 'Uloga';
+
+  @override
+  String get roleClient => 'Klijent';
+
+  @override
+  String get roleTrainer => 'Trener';
+
+  @override
+  String get roleAdmin => 'Administrator';
+
+  @override
+  String get editProfile => 'Izmeni profil';
+
+  @override
+  String get save => 'Sačuvaj';
+
+  @override
+  String get cancel => 'Otkaži';
+
+  @override
+  String get logout => 'Odjavi se';
+
+  @override
+  String get profileSaved => 'Profil je sačuvan.';
 }

@@ -1,55 +1,87 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
 
+import '../features/auth/application/auth_providers.dart';
+import '../features/auth/presentation/login_screen.dart';
+import '../features/auth/presentation/reset_password_screen.dart';
+import '../features/auth/presentation/signup_screen.dart';
+import '../features/auth/presentation/splash_screen.dart';
 import '../features/chat/presentation/chat_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/measurements/presentation/measurements_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/schedule/presentation/schedule_screen.dart';
 
-final GoRouter router = GoRouter(
-  initialLocation: '/home',
-  routes: [
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) =>
-          AppShell(navigationShell: navigationShell),
-      branches: [
-        StatefulShellBranch(
-          routes: [
+const _authRoutes = {'/login', '/signup', '/reset'};
+
+final routerProvider = Provider<GoRouter>((ref) {
+  // Bump this whenever auth state changes so go_router re-evaluates redirects.
+  final refresh = ValueNotifier<int>(0);
+  ref.listen(authStateChangesProvider, (_, _) => refresh.value++);
+
+  final router = GoRouter(
+    initialLocation: '/home',
+    refreshListenable: refresh,
+    redirect: (context, state) {
+      final authAsync = ref.read(authStateChangesProvider);
+      final loc = state.matchedLocation;
+
+      // Still resolving the initial auth state: show the splash.
+      if (authAsync.isLoading && !authAsync.hasValue) {
+        return loc == '/splash' ? null : '/splash';
+      }
+
+      final loggedIn = authAsync.asData?.value != null;
+      if (!loggedIn) {
+        return _authRoutes.contains(loc) ? null : '/login';
+      }
+      // Logged in: keep them out of the auth/splash routes.
+      if (loc == '/splash' || _authRoutes.contains(loc)) return '/home';
+      return null;
+    },
+    routes: [
+      GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(path: '/signup', builder: (context, state) => const SignupScreen()),
+      GoRoute(
+          path: '/reset',
+          builder: (context, state) => const ResetPasswordScreen()),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(routes: [
             GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
+          ]),
+          StatefulShellBranch(routes: [
             GoRoute(
                 path: '/schedule',
                 builder: (context, state) => const ScheduleScreen()),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
+          ]),
+          StatefulShellBranch(routes: [
             GoRoute(
                 path: '/measurements',
                 builder: (context, state) => const MeasurementsScreen()),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
+          ]),
+          StatefulShellBranch(routes: [
             GoRoute(path: '/chat', builder: (context, state) => const ChatScreen()),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
+          ]),
+          StatefulShellBranch(routes: [
             GoRoute(
                 path: '/profile',
                 builder: (context, state) => const ProfileScreen()),
-          ],
-        ),
-      ],
-    ),
-  ],
-);
+          ]),
+        ],
+      ),
+    ],
+  );
+
+  ref.onDispose(refresh.dispose);
+  ref.onDispose(router.dispose);
+  return router;
+});
 
 /// Root scaffold hosting the bottom navigation across the five top-level tabs.
 class AppShell extends StatelessWidget {

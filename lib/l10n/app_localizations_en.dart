@@ -80,4 +80,116 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get loginTitle => 'Sign in';
+
+  @override
+  String get signupTitle => 'Create account';
+
+  @override
+  String get resetTitle => 'Reset password';
+
+  @override
+  String get emailLabel => 'Email';
+
+  @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get displayNameLabel => 'Full name';
+
+  @override
+  String get phoneLabel => 'Phone';
+
+  @override
+  String get loginButton => 'Sign in';
+
+  @override
+  String get signupButton => 'Create account';
+
+  @override
+  String get resetButton => 'Send reset link';
+
+  @override
+  String get noAccountPrompt => 'No account? Create one';
+
+  @override
+  String get haveAccountPrompt => 'Already have an account? Sign in';
+
+  @override
+  String get forgotPassword => 'Forgot password?';
+
+  @override
+  String get resetSent =>
+      'If that email is registered, we\'ve sent a reset link.';
+
+  @override
+  String get consentLabel =>
+      'I consent to processing of my health and body data and accept the terms of use.';
+
+  @override
+  String get consentRequired => 'You must accept the terms to continue.';
+
+  @override
+  String get validationRequired => 'Required.';
+
+  @override
+  String get validationEmailInvalid => 'Enter a valid email address.';
+
+  @override
+  String get validationPasswordShort =>
+      'Password must be at least 6 characters.';
+
+  @override
+  String get errorEmailInUse => 'This email is already registered.';
+
+  @override
+  String get errorInvalidEmail => 'That email address is not valid.';
+
+  @override
+  String get errorWrongCredentials => 'Wrong email or password.';
+
+  @override
+  String get errorWeakPassword => 'That password is too weak.';
+
+  @override
+  String get errorTooManyRequests =>
+      'Too many attempts. Please try again later.';
+
+  @override
+  String get errorNetwork => 'Network error. Check your connection.';
+
+  @override
+  String get errorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get accountSection => 'Account';
+
+  @override
+  String get profileRole => 'Role';
+
+  @override
+  String get roleClient => 'Client';
+
+  @override
+  String get roleTrainer => 'Trainer';
+
+  @override
+  String get roleAdmin => 'Administrator';
+
+  @override
+  String get editProfile => 'Edit profile';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get logout => 'Log out';
+
+  @override
+  String get profileSaved => 'Profile saved.';
 }
