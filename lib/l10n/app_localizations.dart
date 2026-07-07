@@ -451,6 +451,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile saved.'**
   String get profileSaved;
+
+  /// No description provided for @trainersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainers'**
+  String get trainersTitle;
+
+  /// No description provided for @chooseTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a trainer'**
+  String get chooseTrainer;
+
+  /// No description provided for @noTrainers.
+  ///
+  /// In en, this message translates to:
+  /// **'No trainers yet.'**
+  String get noTrainers;
+
+  /// No description provided for @trainerBio.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get trainerBio;
+
+  /// No description provided for @emptyBio.
+  ///
+  /// In en, this message translates to:
+  /// **'No description yet.'**
+  String get emptyBio;
+
+  /// No description provided for @manageRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage roles'**
+  String get manageRoles;
+
+  /// No description provided for @editTrainerProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit trainer profile'**
+  String get editTrainerProfile;
+
+  /// No description provided for @usersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get usersTitle;
+
+  /// No description provided for @roleTrainerSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer'**
+  String get roleTrainerSwitch;
+
+  /// No description provided for @notAuthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have access to this page.'**
+  String get notAuthorized;
+
+  /// No description provided for @roleUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Role updated.'**
+  String get roleUpdated;
 }
 
 class _AppLocalizationsDelegate

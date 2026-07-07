@@ -192,4 +192,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSaved => 'Profile saved.';
+
+  @override
+  String get trainersTitle => 'Trainers';
+
+  @override
+  String get chooseTrainer => 'Choose a trainer';
+
+  @override
+  String get noTrainers => 'No trainers yet.';
+
+  @override
+  String get trainerBio => 'Bio';
+
+  @override
+  String get emptyBio => 'No description yet.';
+
+  @override
+  String get manageRoles => 'Manage roles';
+
+  @override
+  String get editTrainerProfile => 'Edit trainer profile';
+
+  @override
+  String get usersTitle => 'Users';
+
+  @override
+  String get roleTrainerSwitch => 'Trainer';
+
+  @override
+  String get notAuthorized => 'You don\'t have access to this page.';
+
+  @override
+  String get roleUpdated => 'Role updated.';
 }

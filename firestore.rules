@@ -35,6 +35,13 @@ service cloud.firestore {
       allow delete: if isSelf(uid) || isAdmin();
     }
 
+    // Public trainer profiles: any signed-in user can browse them (to choose a
+    // trainer); only an admin or the trainer themselves may write.
+    match /trainers/{uid} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || (isSelf(uid) && roleOf(uid) == 'trainer');
+    }
+
     // Everything else is denied until its own milestone adds explicit rules.
     match /{document=**} {
       allow read, write: if false;

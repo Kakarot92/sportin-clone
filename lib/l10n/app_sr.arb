@@ -58,5 +58,16 @@
   "save": "Sačuvaj",
   "cancel": "Otkaži",
   "logout": "Odjavi se",
-  "profileSaved": "Profil je sačuvan."
+  "profileSaved": "Profil je sačuvan.",
+  "trainersTitle": "Treneri",
+  "chooseTrainer": "Izaberi trenera",
+  "noTrainers": "Još nema trenera.",
+  "trainerBio": "Biografija",
+  "emptyBio": "Nema opisa.",
+  "manageRoles": "Upravljaj ulogama",
+  "editTrainerProfile": "Uredi trenerski profil",
+  "usersTitle": "Korisnici",
+  "roleTrainerSwitch": "Trener",
+  "notAuthorized": "Nemate pristup ovoj stranici.",
+  "roleUpdated": "Uloga ažurirana."
 }

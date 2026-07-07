@@ -191,4 +191,37 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get profileSaved => 'Profil je sačuvan.';
+
+  @override
+  String get trainersTitle => 'Treneri';
+
+  @override
+  String get chooseTrainer => 'Izaberi trenera';
+
+  @override
+  String get noTrainers => 'Još nema trenera.';
+
+  @override
+  String get trainerBio => 'Biografija';
+
+  @override
+  String get emptyBio => 'Nema opisa.';
+
+  @override
+  String get manageRoles => 'Upravljaj ulogama';
+
+  @override
+  String get editTrainerProfile => 'Uredi trenerski profil';
+
+  @override
+  String get usersTitle => 'Korisnici';
+
+  @override
+  String get roleTrainerSwitch => 'Trener';
+
+  @override
+  String get notAuthorized => 'Nemate pristup ovoj stranici.';
+
+  @override
+  String get roleUpdated => 'Uloga ažurirana.';
 }

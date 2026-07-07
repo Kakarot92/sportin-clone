@@ -58,5 +58,16 @@
   "save": "Save",
   "cancel": "Cancel",
   "logout": "Log out",
-  "profileSaved": "Profile saved."
+  "profileSaved": "Profile saved.",
+  "trainersTitle": "Trainers",
+  "chooseTrainer": "Choose a trainer",
+  "noTrainers": "No trainers yet.",
+  "trainerBio": "Bio",
+  "emptyBio": "No description yet.",
+  "manageRoles": "Manage roles",
+  "editTrainerProfile": "Edit trainer profile",
+  "usersTitle": "Users",
+  "roleTrainerSwitch": "Trainer",
+  "notAuthorized": "You don't have access to this page.",
+  "roleUpdated": "Role updated."
 }

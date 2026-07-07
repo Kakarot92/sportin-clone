@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sportin_clone/app/providers.dart';
 import 'package:sportin_clone/core/models/app_user.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
@@ -56,6 +57,18 @@ class ProfileScreen extends ConsumerWidget {
               icon: const Icon(Icons.edit_outlined),
               label: Text(l10n.editProfile),
             ),
+            if (user.isTrainer)
+              OutlinedButton.icon(
+                onPressed: () => context.push('/profile/trainer-edit'),
+                icon: const Icon(Icons.badge_outlined),
+                label: Text(l10n.editTrainerProfile),
+              ),
+            if (user.isAdmin)
+              OutlinedButton.icon(
+                onPressed: () => context.push('/profile/admin-users'),
+                icon: const Icon(Icons.admin_panel_settings_outlined),
+                label: Text(l10n.manageRoles),
+              ),
           ],
           const Divider(height: 40),
           Text(l10n.settingsAppearance, style: theme.textTheme.titleMedium),

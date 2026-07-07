@@ -2,6 +2,22 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-07 — M3 Trainer provisioning & profiles: code COMPLETE, rules verified
+
+Features F020 (admin grant/revoke trainer), F021 (trainer public profile +
+edit), F022 (choose-trainer directory). New `trainers/{uid}` public-profile
+collection; Schedule tab now hosts the trainer directory → trainer profile.
+Admin role-management screen + trainer bio-edit screen wired under Profile
+(buttons gated by role). `flutter analyze` clean, `flutter test` green.
+
+Firestore `trainers` rules deployed and REST-verified:
+- AS-019 signed-in client can read the trainers collection (200)
+- client CANNOT create a trainer profile (403)
+- unauthenticated read denied (403)
+
+Pending live demo of F020 (grant trainer) — needs an admin account (owner
+seed). Directory shows real trainers once an admin grants the role.
+
 ## 2026-07-07 — M2 Auth & roles: COMPLETE, verified live
 
 Features F010–F019 implemented. Verified without an emulator via the Firebase

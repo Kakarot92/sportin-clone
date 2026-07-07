@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
 
+import '../features/admin/presentation/admin_users_screen.dart';
 import '../features/auth/application/auth_providers.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/reset_password_screen.dart';
@@ -12,7 +13,9 @@ import '../features/chat/presentation/chat_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/measurements/presentation/measurements_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
-import '../features/schedule/presentation/schedule_screen.dart';
+import '../features/trainers/presentation/trainer_directory_screen.dart';
+import '../features/trainers/presentation/trainer_edit_screen.dart';
+import '../features/trainers/presentation/trainer_profile_screen.dart';
 
 const _authRoutes = {'/login', '/signup', '/reset'};
 
@@ -57,8 +60,16 @@ final routerProvider = Provider<GoRouter>((ref) {
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
-                path: '/schedule',
-                builder: (context, state) => const ScheduleScreen()),
+              path: '/schedule',
+              builder: (context, state) => const TrainerDirectoryScreen(),
+              routes: [
+                GoRoute(
+                  path: 'trainer/:uid',
+                  builder: (context, state) =>
+                      TrainerProfileScreen(uid: state.pathParameters['uid']!),
+                ),
+              ],
+            ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
@@ -70,8 +81,17 @@ final routerProvider = Provider<GoRouter>((ref) {
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
-                path: '/profile',
-                builder: (context, state) => const ProfileScreen()),
+              path: '/profile',
+              builder: (context, state) => const ProfileScreen(),
+              routes: [
+                GoRoute(
+                    path: 'admin-users',
+                    builder: (context, state) => const AdminUsersScreen()),
+                GoRoute(
+                    path: 'trainer-edit',
+                    builder: (context, state) => const TrainerEditScreen()),
+              ],
+            ),
           ]),
         ],
       ),
