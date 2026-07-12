@@ -2,6 +2,30 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-12 — M4 Schedules & availability — COMPLETE
+
+Two serial workers under supervision:
+
+- **Worker 1 (data+logic)** — `lib/features/scheduling/domain/` (TimeRange,
+  WeeklyAvailability, AvailabilityException, StudioSettings, Slot, Booking,
+  date_utils, pure `availability_service.generateDaySlots`), `.../data/
+  availability_repository.dart`, `.../application/scheduling_providers.dart`.
+  Firestore rules extended for `availabilityTemplates`, `availabilityExceptions`,
+  `studioSettings`, `bookings` (read-only until M5) — validated + **deployed**
+  via Firebase MCP. `test/availability_service_test.dart`: 11 cases green.
+  Covers AS-020, AS-021, AS-022, AS-023, AS-024, AS-026.
+- **Worker 2 (UI)** — `lib/features/scheduling/presentation/`
+  (availability_editor_screen, studio_closed_days_screen, trainer_slots_screen),
+  `table_calendar ^3.2.0`, routes in `lib/app/router.dart`
+  (`/profile/availability` trainer-gated, `/profile/studio` admin-gated,
+  `/schedule/trainer/:uid/slots`), entry buttons in profile + trainer profile.
+
+Gate: `dart analyze lib test` clean; `flutter test` 12/12 pass. Commits
+dd1cf86 (F030) + c6a2b63 (F034). Firebase MCP seeds: template for
+`trainer-djole` (Mon–Thu 09–12 & 16–20, Fri 09–14, 60-min), `studioSettings`
+closed Sundays. Verified live on Edge web build. AS-025 (Google Calendar busy)
+intentionally deferred with the Google Calendar connection.
+
 ## 2026-07-07 — Design: Kinetik visual language applied
 
 Client picked **Kinetik** from the 5-direction Design Lab. Implemented:
