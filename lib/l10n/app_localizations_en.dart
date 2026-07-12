@@ -240,4 +240,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get comingSoon => 'Coming soon';
+
+  @override
+  String get availability => 'Availability';
+
+  @override
+  String get weeklyAvailability => 'Weekly availability';
+
+  @override
+  String get slotDuration => 'Slot duration';
+
+  @override
+  String get minutesShort => 'min';
+
+  @override
+  String get addTimeRange => 'Add time range';
+
+  @override
+  String get from => 'From';
+
+  @override
+  String get to => 'To';
+
+  @override
+  String get exceptions => 'Exceptions';
+
+  @override
+  String get addException => 'Add exception';
+
+  @override
+  String get blockWholeDay => 'Block whole day';
+
+  @override
+  String get noExceptions => 'No exceptions';
+
+  @override
+  String get studioClosedDays => 'Studio closed days';
+
+  @override
+  String get closedWeekdaysLabel => 'Closed weekdays';
+
+  @override
+  String get closedDatesLabel => 'Closed dates';
+
+  @override
+  String get addClosedDate => 'Add date';
+
+  @override
+  String get availableSlots => 'Available slots';
+
+  @override
+  String get noSlotsForDay => 'No available slots for the selected day';
+
+  @override
+  String get selectDay => 'Select a day';
+
+  @override
+  String get weekdayMon => 'Mon';
+
+  @override
+  String get weekdayTue => 'Tue';
+
+  @override
+  String get weekdayWed => 'Wed';
+
+  @override
+  String get weekdayThu => 'Thu';
+
+  @override
+  String get weekdayFri => 'Fri';
+
+  @override
+  String get weekdaySat => 'Sat';
+
+  @override
+  String get weekdaySun => 'Sun';
 }

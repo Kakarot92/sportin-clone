@@ -239,4 +239,79 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get comingSoon => 'Uskoro';
+
+  @override
+  String get availability => 'Dostupnost';
+
+  @override
+  String get weeklyAvailability => 'Nedeljni raspored';
+
+  @override
+  String get slotDuration => 'Trajanje termina';
+
+  @override
+  String get minutesShort => 'min';
+
+  @override
+  String get addTimeRange => 'Dodaj interval';
+
+  @override
+  String get from => 'Od';
+
+  @override
+  String get to => 'Do';
+
+  @override
+  String get exceptions => 'Izuzeci';
+
+  @override
+  String get addException => 'Dodaj izuzetak';
+
+  @override
+  String get blockWholeDay => 'Ceo dan';
+
+  @override
+  String get noExceptions => 'Nema izuzetaka';
+
+  @override
+  String get studioClosedDays => 'Neradni dani studija';
+
+  @override
+  String get closedWeekdaysLabel => 'Neradni dani u nedelji';
+
+  @override
+  String get closedDatesLabel => 'Neradni datumi';
+
+  @override
+  String get addClosedDate => 'Dodaj datum';
+
+  @override
+  String get availableSlots => 'Slobodni termini';
+
+  @override
+  String get noSlotsForDay => 'Nema slobodnih termina za izabrani dan';
+
+  @override
+  String get selectDay => 'Izaberi dan';
+
+  @override
+  String get weekdayMon => 'Pon';
+
+  @override
+  String get weekdayTue => 'Uto';
+
+  @override
+  String get weekdayWed => 'Sre';
+
+  @override
+  String get weekdayThu => 'Čet';
+
+  @override
+  String get weekdayFri => 'Pet';
+
+  @override
+  String get weekdaySat => 'Sub';
+
+  @override
+  String get weekdaySun => 'Ned';
 }

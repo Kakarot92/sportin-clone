@@ -42,6 +42,43 @@ service cloud.firestore {
       allow write: if isAdmin() || (isSelf(uid) && roleOf(uid) == 'trainer');
     }
 
+    // ── M4: Schedules & availability ────────────────────────────────────────
+
+    // Weekly availability templates: one document per trainer.
+    // Any signed-in user may read (clients need to see trainer slots).
+    // Only the trainer themselves or an admin may write.
+    match /availabilityTemplates/{trainerUid} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin()
+        || (isSelf(trainerUid) && roleOf(trainerUid) == 'trainer');
+    }
+
+    // One-off availability exceptions (per trainer, per date).
+    match /availabilityExceptions/{id} {
+      allow read: if isSignedIn();
+      allow create: if isAdmin()
+        || (isSignedIn()
+            && request.resource.data.trainerUid == request.auth.uid
+            && roleOf(request.auth.uid) == 'trainer');
+      allow update, delete: if isAdmin()
+        || (isSignedIn() && resource.data.trainerUid == request.auth.uid);
+    }
+
+    // Studio-wide settings (opening hours, closed days).
+    // Any signed-in user may read; only admins may write.
+    match /studioSettings/{doc} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Bookings: any signed-in user may read.
+    // Write access is intentionally false in M4 — booking creation is
+    // implemented in M5 and will replace this rule.
+    match /bookings/{id} {
+      allow read: if isSignedIn();
+      allow write: if false; // M5 will add create/update/cancel rules here
+    }
+
     // Everything else is denied until its own milestone adds explicit rules.
     match /{document=**} {
       allow read, write: if false;

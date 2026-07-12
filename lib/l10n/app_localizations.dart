@@ -547,6 +547,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coming soon'**
   String get comingSoon;
+
+  /// No description provided for @availability.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get availability;
+
+  /// No description provided for @weeklyAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly availability'**
+  String get weeklyAvailability;
+
+  /// No description provided for @slotDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot duration'**
+  String get slotDuration;
+
+  /// No description provided for @minutesShort.
+  ///
+  /// In en, this message translates to:
+  /// **'min'**
+  String get minutesShort;
+
+  /// No description provided for @addTimeRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Add time range'**
+  String get addTimeRange;
+
+  /// No description provided for @from.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get from;
+
+  /// No description provided for @to.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get to;
+
+  /// No description provided for @exceptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Exceptions'**
+  String get exceptions;
+
+  /// No description provided for @addException.
+  ///
+  /// In en, this message translates to:
+  /// **'Add exception'**
+  String get addException;
+
+  /// No description provided for @blockWholeDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Block whole day'**
+  String get blockWholeDay;
+
+  /// No description provided for @noExceptions.
+  ///
+  /// In en, this message translates to:
+  /// **'No exceptions'**
+  String get noExceptions;
+
+  /// No description provided for @studioClosedDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Studio closed days'**
+  String get studioClosedDays;
+
+  /// No description provided for @closedWeekdaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed weekdays'**
+  String get closedWeekdaysLabel;
+
+  /// No description provided for @closedDatesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed dates'**
+  String get closedDatesLabel;
+
+  /// No description provided for @addClosedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Add date'**
+  String get addClosedDate;
+
+  /// No description provided for @availableSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'Available slots'**
+  String get availableSlots;
+
+  /// No description provided for @noSlotsForDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No available slots for the selected day'**
+  String get noSlotsForDay;
+
+  /// No description provided for @selectDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a day'**
+  String get selectDay;
+
+  /// No description provided for @weekdayMon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get weekdayMon;
+
+  /// No description provided for @weekdayTue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get weekdayTue;
+
+  /// No description provided for @weekdayWed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get weekdayWed;
+
+  /// No description provided for @weekdayThu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get weekdayThu;
+
+  /// No description provided for @weekdayFri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get weekdayFri;
+
+  /// No description provided for @weekdaySat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get weekdaySat;
+
+  /// No description provided for @weekdaySun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get weekdaySun;
 }
 
 class _AppLocalizationsDelegate
