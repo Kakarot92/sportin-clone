@@ -13,6 +13,9 @@ import '../features/chat/presentation/chat_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/measurements/presentation/measurements_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
+import '../features/scheduling/presentation/availability_editor_screen.dart';
+import '../features/scheduling/presentation/studio_closed_days_screen.dart';
+import '../features/scheduling/presentation/trainer_slots_screen.dart';
 import '../features/trainers/presentation/trainer_directory_screen.dart';
 import '../features/trainers/presentation/trainer_edit_screen.dart';
 import '../features/trainers/presentation/trainer_profile_screen.dart';
@@ -67,6 +70,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                   path: 'trainer/:uid',
                   builder: (context, state) =>
                       TrainerProfileScreen(uid: state.pathParameters['uid']!),
+                  routes: [
+                    GoRoute(
+                      path: 'slots',
+                      builder: (context, state) => TrainerSlotsScreen(
+                        trainerUid: state.pathParameters['uid']!,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -90,6 +101,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                 GoRoute(
                     path: 'trainer-edit',
                     builder: (context, state) => const TrainerEditScreen()),
+                GoRoute(
+                    path: 'availability',
+                    builder: (context, state) =>
+                        const AvailabilityEditorScreen()),
+                GoRoute(
+                    path: 'studio',
+                    builder: (context, state) =>
+                        const StudioClosedDaysScreen()),
               ],
             ),
           ]),

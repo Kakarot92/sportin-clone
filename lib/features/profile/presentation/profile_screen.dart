@@ -55,11 +55,23 @@ class ProfileScreen extends ConsumerWidget {
                   icon: const Icon(Icons.badge_outlined),
                   label: Text(l10n.editTrainerProfile),
                 ),
+              if (user.isTrainer)
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/profile/availability'),
+                  icon: const Icon(Icons.calendar_today_outlined),
+                  label: Text(l10n.weeklyAvailability),
+                ),
               if (user.isAdmin)
                 OutlinedButton.icon(
                   onPressed: () => context.push('/profile/admin-users'),
                   icon: const Icon(Icons.admin_panel_settings_outlined),
                   label: Text(l10n.manageRoles),
+                ),
+              if (user.isAdmin)
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/profile/studio'),
+                  icon: const Icon(Icons.store_outlined),
+                  label: Text(l10n.studioClosedDays),
                 ),
             ],
             const SizedBox(height: 28),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sportin_clone/app/kinetic.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
@@ -52,6 +53,13 @@ class TrainerProfileScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               Text(t.bio.isEmpty ? l10n.emptyBio : t.bio,
                   style: theme.textTheme.bodyLarge),
+              const SizedBox(height: 24),
+              VoltButton(
+                label: l10n.availableSlots,
+                icon: Icons.event_available,
+                onPressed: () =>
+                    context.push('/schedule/trainer/$uid/slots'),
+              ),
             ],
           );
         },
