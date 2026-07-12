@@ -73,5 +73,6 @@
   "homeShortcuts": "Shortcuts",
   "nextTraining": "Next training",
   "noUpcomingTraining": "You don't have an upcoming training yet.",
-  "bookTraining": "Book a training"
+  "bookTraining": "Book a training",
+  "comingSoon": "Coming soon"
 }

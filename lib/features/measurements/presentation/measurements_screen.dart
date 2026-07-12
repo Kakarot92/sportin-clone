@@ -9,6 +9,7 @@ class MeasurementsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return PlaceholderScaffold(
+      eyebrow: l10n.comingSoon,
       title: l10n.measurementsTitle,
       message: l10n.measurementsPlaceholder,
       icon: Icons.straighten,

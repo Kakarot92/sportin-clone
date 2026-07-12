@@ -236,4 +236,7 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get bookTraining => 'Zakaži trening';
+
+  @override
+  String get comingSoon => 'Uskoro';
 }

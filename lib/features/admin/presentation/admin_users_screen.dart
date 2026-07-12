@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sportin_clone/app/kinetic.dart';
+import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/core/models/app_user.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
@@ -16,21 +18,35 @@ class AdminUsersScreen extends ConsumerWidget {
 
     if (me == null || !me.isAdmin) {
       return Scaffold(
-        appBar: AppBar(title: Text(l10n.manageRoles)),
+        appBar: AppBar(),
         body: Center(child: Text(l10n.notAuthorized)),
       );
     }
 
     final usersAsync = ref.watch(allUsersProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.usersTitle)),
+      appBar: AppBar(),
       body: usersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(l10n.errorGeneric)),
         data: (users) => ListView.separated(
-          itemCount: users.length,
-          separatorBuilder: (_, _) => const Divider(height: 1),
-          itemBuilder: (context, i) => _UserRow(user: users[i], me: me),
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+          itemCount: users.length + 1,
+          separatorBuilder: (_, i) =>
+              SizedBox(height: i == 0 ? 24 : 12),
+          itemBuilder: (context, i) {
+            if (i == 0) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Eyebrow('Admin'),
+                  const SizedBox(height: 10),
+                  DisplayTitle(l10n.usersTitle),
+                ],
+              );
+            }
+            return _UserRow(user: users[i - 1], me: me);
+          },
         ),
       ),
     );
@@ -60,16 +76,17 @@ class _UserRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
 
-    // Admins (and yourself) are shown as a non-editable chip.
     final Widget trailing;
     if (user.isAdmin) {
-      trailing = Chip(label: Text(l10n.roleAdmin));
+      trailing = VoltBadge(l10n.roleAdmin);
     } else {
       trailing = Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(l10n.roleTrainerSwitch),
+          Text(l10n.roleTrainerSwitch,
+              style: theme.textTheme.bodyMedium),
           Switch(
             value: user.isTrainer,
             onChanged: (v) => _toggle(context, ref, v),
@@ -78,10 +95,30 @@ class _UserRow extends ConsumerWidget {
       );
     }
 
-    return ListTile(
-      title: Text(user.displayName.isEmpty ? user.email : user.displayName),
-      subtitle: Text(user.email),
-      trailing: trailing,
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+      decoration: BoxDecoration(
+        color: kInkElevated,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: theme.dividerColor),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  user.displayName.isEmpty ? user.email : user.displayName,
+                  style: theme.textTheme.titleMedium,
+                ),
+                Text(user.email, style: theme.textTheme.bodyMedium),
+              ],
+            ),
+          ),
+          trailing,
+        ],
+      ),
     );
   }
 }

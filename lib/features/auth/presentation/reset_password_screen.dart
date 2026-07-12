@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sportin_clone/app/kinetic.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
 
 import '../application/auth_providers.dart';
@@ -27,7 +28,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final navigator = GoRouter.of(context);
+    final router = GoRouter.of(context);
     if (!_formKey.currentState!.validate()) return;
     final ok = await ref
         .read(authControllerProvider.notifier)
@@ -35,7 +36,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     if (!mounted) return;
     if (ok) {
       messenger.showSnackBar(SnackBar(content: Text(l10n.resetSent)));
-      navigator.go('/login');
+      router.go('/login');
     } else {
       final state = ref.read(authControllerProvider);
       messenger.showSnackBar(
@@ -49,37 +50,39 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     final l10n = AppLocalizations.of(context);
     final isLoading = ref.watch(authControllerProvider).isLoading;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.resetTitle)),
-      body: Center(
+      body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextFormField(
+                Eyebrow(l10n.resetTitle),
+                const SizedBox(height: 12),
+                const DisplayTitle('Reset\nlozinke.'),
+                const SizedBox(height: 32),
+                KineticField(
+                  label: l10n.emailLabel,
                   controller: _email,
+                  hint: 'ime@primer.rs',
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: l10n.emailLabel,
-                    border: const OutlineInputBorder(),
-                  ),
                   validator: (v) =>
                       isValidEmail(v) ? null : l10n.validationEmailInvalid,
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: isLoading ? null : _submit,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.resetButton),
+                const SizedBox(height: 20),
+                VoltButton(
+                  label: l10n.resetButton,
+                  icon: Icons.send,
+                  loading: isLoading,
+                  onPressed: _submit,
+                ),
+                const SizedBox(height: 14),
+                Center(
+                  child: TextButton(
+                    onPressed: isLoading ? null : () => context.go('/login'),
+                    child: Text(l10n.haveAccountPrompt,
+                        style: const TextStyle(fontWeight: FontWeight.w800)),
                   ),
                 ),
               ],

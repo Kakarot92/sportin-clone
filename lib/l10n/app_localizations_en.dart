@@ -237,4 +237,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookTraining => 'Book a training';
+
+  @override
+  String get comingSoon => 'Coming soon';
 }

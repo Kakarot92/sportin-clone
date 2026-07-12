@@ -541,6 +541,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Book a training'**
   String get bookTraining;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
 }
 
 class _AppLocalizationsDelegate

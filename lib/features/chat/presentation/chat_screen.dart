@@ -9,6 +9,7 @@ class ChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return PlaceholderScaffold(
+      eyebrow: l10n.comingSoon,
       title: l10n.chatTitle,
       message: l10n.chatPlaceholder,
       icon: Icons.chat_bubble_outline,
