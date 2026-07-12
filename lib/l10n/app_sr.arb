@@ -69,5 +69,9 @@
   "usersTitle": "Korisnici",
   "roleTrainerSwitch": "Trener",
   "notAuthorized": "Nemate pristup ovoj stranici.",
-  "roleUpdated": "Uloga ažurirana."
+  "roleUpdated": "Uloga ažurirana.",
+  "homeShortcuts": "Prečice",
+  "nextTraining": "Sledeći trening",
+  "noUpcomingTraining": "Još nemaš zakazan trening.",
+  "bookTraining": "Zakaži trening"
 }

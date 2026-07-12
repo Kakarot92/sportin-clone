@@ -111,4 +111,4 @@ Discovery Q13 = "client provides designs." Timing (non-blocking for approval/con
 - **Per screen (before or during `/mission-run` for each feature):** mockups for login, choose-trainer, slot calendar, booking, measurements + charts, chat, admin.
 - **Accepted formats:** Figma link, screenshots/images, or a style-guide (hex + font + spacing) plus references to specific sportIN screens to emulate.
 - **Fallback if design is late:** workers implement a clean Material 3 baseline against the chosen light/dark theme, to be re-skinned when designs arrive.
-- **Status:** _not yet received — awaiting brand foundation from client._
+- **Status:** _received. Client chose **Kinetik** (of 5 Design-Lab directions): volt-yellow `#CCFF00` on near-black `#0B0B0C`, Archivo Black display + Inter Tight body, huge uppercase headlines, numbers-as-heroes, dark-first. Implemented as the app theme (`lib/app/theme.dart` + `lib/app/kinetic.dart`) and applied to login/signup/home/profile. Remaining screens inherit the theme; art-direct per screen as features land._

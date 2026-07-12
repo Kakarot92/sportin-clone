@@ -225,4 +225,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleUpdated => 'Role updated.';
+
+  @override
+  String get homeShortcuts => 'Shortcuts';
+
+  @override
+  String get nextTraining => 'Next training';
+
+  @override
+  String get noUpcomingTraining => 'You don\'t have an upcoming training yet.';
+
+  @override
+  String get bookTraining => 'Book a training';
 }

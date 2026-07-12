@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sportin_clone/app/kinetic.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
 
 import '../application/auth_providers.dart';
@@ -39,7 +40,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         SnackBar(content: Text(authErrorMessage(l10n, state.error))),
       );
     }
-    // On success, the router redirect navigates to /home automatically.
   }
 
   @override
@@ -48,41 +48,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final isLoading = ref.watch(authControllerProvider).isLoading;
     return Scaffold(
       key: const Key('login-screen'),
-      appBar: AppBar(title: Text(l10n.loginTitle)),
-      body: Center(
+      body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(24, 48, 24, 32),
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(Icons.fitness_center,
-                    size: 64, color: Theme.of(context).colorScheme.primary),
-                const SizedBox(height: 24),
-                TextFormField(
+                const Eyebrow('Prijava'),
+                const SizedBox(height: 12),
+                const DisplayTitle('Tvoj trening.\nTvoj tempo.'),
+                const SizedBox(height: 14),
+                Text(l10n.homeSubtitle,
+                    style: Theme.of(context).textTheme.bodyMedium),
+                const SizedBox(height: 36),
+                KineticField(
+                  label: l10n.emailLabel,
                   controller: _email,
+                  hint: 'ime@primer.rs',
                   keyboardType: TextInputType.emailAddress,
-                  autofillHints: const [AutofillHints.email],
-                  decoration: InputDecoration(
-                    labelText: l10n.emailLabel,
-                    border: const OutlineInputBorder(),
-                  ),
                   validator: (v) =>
                       isValidEmail(v) ? null : l10n.validationEmailInvalid,
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
+                const SizedBox(height: 20),
+                KineticField(
+                  label: l10n.passwordLabel,
                   controller: _password,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: l10n.passwordLabel,
-                    border: const OutlineInputBorder(),
-                  ),
+                  obscure: true,
                   validator: (v) => (v == null || v.isEmpty)
                       ? l10n.validationRequired
                       : null,
                 ),
+                const SizedBox(height: 8),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -90,24 +88,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     child: Text(l10n.forgotPassword),
                   ),
                 ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: isLoading ? null : _submit,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.loginButton),
-                  ),
+                const SizedBox(height: 16),
+                VoltButton(
+                  label: l10n.loginButton,
+                  icon: Icons.bolt,
+                  loading: isLoading,
+                  onPressed: _submit,
                 ),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: isLoading ? null : () => context.go('/signup'),
-                  child: Text(l10n.noAccountPrompt),
+                const SizedBox(height: 18),
+                Center(
+                  child: TextButton(
+                    onPressed: isLoading ? null : () => context.go('/signup'),
+                    child: Text(
+                      l10n.noAccountPrompt,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                  ),
                 ),
               ],
             ),

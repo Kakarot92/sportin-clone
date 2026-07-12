@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sportin_clone/app/kinetic.dart';
+import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
 
 import '../application/auth_providers.dart';
@@ -35,9 +37,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final messenger = ScaffoldMessenger.of(context);
     if (!_formKey.currentState!.validate()) return;
     if (!_consent) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.consentRequired)),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(l10n.consentRequired)));
       return;
     }
     await ref.read(authControllerProvider.notifier).signUp(
@@ -52,7 +52,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         SnackBar(content: Text(authErrorMessage(l10n, state.error))),
       );
     }
-    // On success, the router redirect navigates to /home automatically.
   }
 
   @override
@@ -61,87 +60,86 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final isLoading = ref.watch(authControllerProvider).isLoading;
     return Scaffold(
       key: const Key('signup-screen'),
-      appBar: AppBar(title: Text(l10n.signupTitle)),
-      body: Center(
+      appBar: AppBar(),
+      body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
           child: Form(
             key: _formKey,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextFormField(
+                const Eyebrow('Registracija'),
+                const SizedBox(height: 12),
+                const DisplayTitle('Napravi\nnalog.'),
+                const SizedBox(height: 32),
+                KineticField(
+                  label: l10n.displayNameLabel,
                   controller: _name,
                   textCapitalization: TextCapitalization.words,
-                  decoration: InputDecoration(
-                    labelText: l10n.displayNameLabel,
-                    border: const OutlineInputBorder(),
-                  ),
                   validator: (v) => (v == null || v.trim().isEmpty)
                       ? l10n.validationRequired
                       : null,
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
+                const SizedBox(height: 18),
+                KineticField(
+                  label: l10n.emailLabel,
                   controller: _email,
+                  hint: 'ime@primer.rs',
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: l10n.emailLabel,
-                    border: const OutlineInputBorder(),
-                  ),
                   validator: (v) =>
                       isValidEmail(v) ? null : l10n.validationEmailInvalid,
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
+                const SizedBox(height: 18),
+                KineticField(
+                  label: l10n.phoneLabel,
                   controller: _phone,
                   keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: l10n.phoneLabel,
-                    border: const OutlineInputBorder(),
-                  ),
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
+                const SizedBox(height: 18),
+                KineticField(
+                  label: l10n.passwordLabel,
                   controller: _password,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: l10n.passwordLabel,
-                    border: const OutlineInputBorder(),
-                  ),
+                  obscure: true,
                   validator: (v) => (v == null || v.length < 6)
                       ? l10n.validationPasswordShort
                       : null,
                 ),
-                const SizedBox(height: 8),
-                CheckboxListTile(
-                  value: _consent,
-                  onChanged: isLoading
-                      ? null
-                      : (v) => setState(() => _consent = v ?? false),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(l10n.consentLabel,
-                      style: Theme.of(context).textTheme.bodySmall),
+                const SizedBox(height: 16),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _consent,
+                      activeColor: kVolt,
+                      checkColor: kInk,
+                      onChanged: isLoading
+                          ? null
+                          : (v) => setState(() => _consent = v ?? false),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Text(l10n.consentLabel,
+                            style: Theme.of(context).textTheme.bodyMedium),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: isLoading ? null : _submit,
-                    child: isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(l10n.signupButton),
+                const SizedBox(height: 16),
+                VoltButton(
+                  label: l10n.signupButton,
+                  icon: Icons.bolt,
+                  loading: isLoading,
+                  onPressed: _submit,
+                ),
+                const SizedBox(height: 14),
+                Center(
+                  child: TextButton(
+                    onPressed: isLoading ? null : () => context.go('/login'),
+                    child: Text(l10n.haveAccountPrompt,
+                        style: const TextStyle(fontWeight: FontWeight.w800)),
                   ),
-                ),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: isLoading ? null : () => context.go('/login'),
-                  child: Text(l10n.haveAccountPrompt),
                 ),
               ],
             ),

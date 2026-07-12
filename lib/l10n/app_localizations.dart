@@ -517,6 +517,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Role updated.'**
   String get roleUpdated;
+
+  /// No description provided for @homeShortcuts.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortcuts'**
+  String get homeShortcuts;
+
+  /// No description provided for @nextTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Next training'**
+  String get nextTraining;
+
+  /// No description provided for @noUpcomingTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have an upcoming training yet.'**
+  String get noUpcomingTraining;
+
+  /// No description provided for @bookTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Book a training'**
+  String get bookTraining;
 }
 
 class _AppLocalizationsDelegate

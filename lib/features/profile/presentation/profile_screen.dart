@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sportin_clone/app/kinetic.dart';
 import 'package:sportin_clone/app/providers.dart';
+import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/core/models/app_user.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
@@ -23,90 +25,79 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
-    final userAsync = ref.watch(appUserProvider);
-    final user = userAsync.asData?.value;
+    final user = ref.watch(appUserProvider).asData?.value;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.profileTitle)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text(l10n.accountSection, style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
-          userAsync.when(
-            loading: () => const Padding(
-              padding: EdgeInsets.symmetric(vertical: 24),
-              child: Center(child: CircularProgressIndicator()),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+          children: [
+            Eyebrow(l10n.accountSection),
+            const SizedBox(height: 10),
+            DisplayTitle(l10n.profileTitle),
+            const SizedBox(height: 24),
+            if (user != null) ...[
+              _AccountCard(user: user, roleLabel: _roleLabel(l10n, user.role)),
+              const SizedBox(height: 14),
+              OutlinedButton.icon(
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (_) => _EditProfileDialog(user: user),
+                ),
+                icon: const Icon(Icons.edit_outlined),
+                label: Text(l10n.editProfile),
+              ),
+              if (user.isTrainer)
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/profile/trainer-edit'),
+                  icon: const Icon(Icons.badge_outlined),
+                  label: Text(l10n.editTrainerProfile),
+                ),
+              if (user.isAdmin)
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/profile/admin-users'),
+                  icon: const Icon(Icons.admin_panel_settings_outlined),
+                  label: Text(l10n.manageRoles),
+                ),
+            ],
+            const SizedBox(height: 28),
+            SectionHeader(l10n.settingsAppearance),
+            const SizedBox(height: 14),
+            SegmentedButton<ThemeMode>(
+              segments: [
+                ButtonSegment(
+                    value: ThemeMode.system, label: Text(l10n.themeSystem)),
+                ButtonSegment(
+                    value: ThemeMode.light, label: Text(l10n.themeLight)),
+                ButtonSegment(value: ThemeMode.dark, label: Text(l10n.themeDark)),
+              ],
+              selected: {themeMode},
+              onSelectionChanged: (s) =>
+                  ref.read(themeModeProvider.notifier).set(s.first),
             ),
-            error: (e, _) => Text(l10n.errorGeneric),
-            data: (u) => _AccountCard(
-              user: u,
-              roleLabel: u == null ? '' : _roleLabel(l10n, u.role),
+            const SizedBox(height: 24),
+            SectionHeader(l10n.settingsLanguage),
+            const SizedBox(height: 14),
+            SegmentedButton<String>(
+              segments: [
+                ButtonSegment(value: 'sr', label: Text(l10n.languageSerbian)),
+                ButtonSegment(value: 'en', label: Text(l10n.languageEnglish)),
+              ],
+              selected: {locale.languageCode},
+              onSelectionChanged: (s) =>
+                  ref.read(localeProvider.notifier).set(Locale(s.first)),
             ),
-          ),
-          if (user != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 32),
             OutlinedButton.icon(
-              onPressed: () => showDialog<void>(
-                context: context,
-                builder: (_) => _EditProfileDialog(user: user),
-              ),
-              icon: const Icon(Icons.edit_outlined),
-              label: Text(l10n.editProfile),
+              onPressed: () =>
+                  ref.read(authControllerProvider.notifier).signOut(),
+              icon: const Icon(Icons.logout),
+              label: Text(l10n.logout),
             ),
-            if (user.isTrainer)
-              OutlinedButton.icon(
-                onPressed: () => context.push('/profile/trainer-edit'),
-                icon: const Icon(Icons.badge_outlined),
-                label: Text(l10n.editTrainerProfile),
-              ),
-            if (user.isAdmin)
-              OutlinedButton.icon(
-                onPressed: () => context.push('/profile/admin-users'),
-                icon: const Icon(Icons.admin_panel_settings_outlined),
-                label: Text(l10n.manageRoles),
-              ),
           ],
-          const Divider(height: 40),
-          Text(l10n.settingsAppearance, style: theme.textTheme.titleMedium),
-          const SizedBox(height: 12),
-          Text(l10n.settingsTheme, style: theme.textTheme.bodyMedium),
-          const SizedBox(height: 8),
-          SegmentedButton<ThemeMode>(
-            segments: [
-              ButtonSegment(
-                  value: ThemeMode.system, label: Text(l10n.themeSystem)),
-              ButtonSegment(
-                  value: ThemeMode.light, label: Text(l10n.themeLight)),
-              ButtonSegment(value: ThemeMode.dark, label: Text(l10n.themeDark)),
-            ],
-            selected: {themeMode},
-            onSelectionChanged: (s) =>
-                ref.read(themeModeProvider.notifier).set(s.first),
-          ),
-          const Divider(height: 40),
-          Text(l10n.settingsLanguage, style: theme.textTheme.titleMedium),
-          const SizedBox(height: 12),
-          SegmentedButton<String>(
-            segments: [
-              ButtonSegment(value: 'sr', label: Text(l10n.languageSerbian)),
-              ButtonSegment(value: 'en', label: Text(l10n.languageEnglish)),
-            ],
-            selected: {locale.languageCode},
-            onSelectionChanged: (s) =>
-                ref.read(localeProvider.notifier).set(Locale(s.first)),
-          ),
-          const Divider(height: 40),
-          FilledButton.tonalIcon(
-            onPressed: () =>
-                ref.read(authControllerProvider.notifier).signOut(),
-            icon: const Icon(Icons.logout),
-            label: Text(l10n.logout),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -115,51 +106,54 @@ class ProfileScreen extends ConsumerWidget {
 class _AccountCard extends StatelessWidget {
   const _AccountCard({required this.user, required this.roleLabel});
 
-  final AppUser? user;
+  final AppUser user;
   final String roleLabel;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    if (user == null) {
-      return const SizedBox.shrink();
-    }
-    final u = user!;
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (u.displayName.isNotEmpty)
-              Text(u.displayName,
-                  style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 4),
-            _row(context, Icons.email_outlined, u.email),
-            if (u.phone.isNotEmpty)
-              _row(context, Icons.phone_outlined, u.phone),
-            const SizedBox(height: 8),
-            Row(
+    final theme = Theme.of(context);
+    final initial = user.displayName.isNotEmpty
+        ? user.displayName.characters.first.toUpperCase()
+        : (user.email.isNotEmpty ? user.email.characters.first.toUpperCase() : '?');
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: kInkElevated,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: theme.dividerColor),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              border: Border.all(color: kVolt, width: 2),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(initial, style: theme.textTheme.headlineSmall),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${l10n.profileRole}: '),
-                Chip(label: Text(roleLabel)),
+                if (user.displayName.isNotEmpty)
+                  Text(user.displayName, style: theme.textTheme.titleLarge),
+                const SizedBox(height: 6),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: VoltBadge(roleLabel),
+                ),
+                const SizedBox(height: 10),
+                Text(user.email, style: theme.textTheme.bodyMedium),
+                if (user.phone.isNotEmpty)
+                  Text(user.phone, style: theme.textTheme.bodyMedium),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _row(BuildContext context, IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: Theme.of(context).colorScheme.outline),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text)),
+          ),
         ],
       ),
     );

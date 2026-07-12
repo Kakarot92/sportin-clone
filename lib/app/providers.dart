@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Holds the active [ThemeMode]. Persistence is added later (F132).
 class ThemeModeNotifier extends Notifier<ThemeMode> {
+  // Kinetik is a dark-first visual language.
   @override
-  ThemeMode build() => ThemeMode.system;
+  ThemeMode build() => ThemeMode.dark;
 
   void set(ThemeMode mode) => state = mode;
 }

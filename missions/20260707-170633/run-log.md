@@ -2,6 +2,17 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-07 — Design: Kinetik visual language applied
+
+Client picked **Kinetik** from the 5-direction Design Lab. Implemented:
+`lib/app/theme.dart` (Kinetik dark-first ColorScheme, Archivo Black + Inter
+Tight via `google_fonts`, component themes) and `lib/app/kinetic.dart`
+(Eyebrow, DisplayTitle, SectionHeader, VoltBadge, KineticField, VoltButton).
+Reskinned login, signup, home, profile to match the reference screens; default
+theme set to dark. Other screens inherit the theme. `dart analyze` clean,
+`flutter test` green, APK builds. (Live emulator screenshot deferred — host
+emulator unstable this session; earlier milestones ran on-device fine.)
+
 ## 2026-07-07 — M3 Trainer provisioning & profiles: code COMPLETE, rules verified
 
 Features F020 (admin grant/revoke trainer), F021 (trainer public profile +

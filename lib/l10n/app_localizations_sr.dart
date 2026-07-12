@@ -224,4 +224,16 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get roleUpdated => 'Uloga ažurirana.';
+
+  @override
+  String get homeShortcuts => 'Prečice';
+
+  @override
+  String get nextTraining => 'Sledeći trening';
+
+  @override
+  String get noUpcomingTraining => 'Još nemaš zakazan trening.';
+
+  @override
+  String get bookTraining => 'Zakaži trening';
 }
