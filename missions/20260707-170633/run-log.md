@@ -2,6 +2,30 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-13 — M5 Booking (1-on-1) — CORE COMPLETE (credits deferred)
+
+Two serial workers under supervision:
+
+- **Worker A (logic)** — `lib/features/booking/` (data/booking_repository.dart,
+  domain/booking_exceptions.dart, application/booking_providers.dart). Reuses the
+  M4 `Booking` model. Transactional create with **deterministic doc id**
+  `{trainerUid}_{date}_{HHmm}` → no double-book (AS-027/028); `isPastSlot` guard
+  (AS-029). Streams: client upcoming, client history, trainer sessions. Firestore
+  `bookings` rules opened for create/update/delete — validated + **deployed**.
+  `test/booking_logic_test.dart`: doc-id idempotency + past-guard.
+- **Worker B (UI)** — `lib/features/booking/presentation/` (my_bookings_screen,
+  trainer_sessions_screen); confirm-to-book flow in trainer_slots_screen (error
+  paths surface slotTaken/pastSlot); routes `/profile/bookings`,
+  `/profile/sessions`; entries in profile; Home next-training card wired to the
+  soonest upcoming booking. Covers AS-030, AS-031, AS-033.
+
+Gate: `dart analyze lib test` clean; `flutter test` 30/30 pass. Commits 052ed24
+(F040) + d1b3cbb (F044).
+
+**DEFERRED:** F042/F043 credit precondition + decrement (AS-032, AS-034, AS-054)
+— depend on the credits/packages feature (F072), not yet built. Booking has no
+credit gate yet; add it when the credits milestone lands.
+
 ## 2026-07-12 — M4 Schedules & availability — COMPLETE
 
 Two serial workers under supervision:
