@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sportin_clone/app/kinetic.dart';
+import 'package:sportin_clone/app/kinetic_effects.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/features/booking/application/booking_providers.dart';
@@ -9,11 +11,11 @@ import 'package:sportin_clone/features/scheduling/application/scheduling_provide
 import 'package:sportin_clone/features/scheduling/domain/slot.dart';
 import 'package:sportin_clone/features/trainers/application/trainers_providers.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 /// Client-facing screen that shows available slots for a given trainer.
 ///
 /// Route: /schedule/trainer/:uid/slots
+/// Kinetik design: horizontal date rail + volt slot blocks (no table_calendar).
 class TrainerSlotsScreen extends ConsumerStatefulWidget {
   const TrainerSlotsScreen({super.key, required this.trainerUid});
 
@@ -24,17 +26,42 @@ class TrainerSlotsScreen extends ConsumerStatefulWidget {
 }
 
 class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
-  late DateTime _focusedDay;
-  DateTime? _selectedDay;
+  late DateTime _selectedDay;
+  late List<DateTime> _days;
 
   @override
   void initState() {
     super.initState();
-    _focusedDay = DateTime.now();
+    final today = _normalise(DateTime.now());
+    _selectedDay = today;
+    // Build 28 days starting from today.
+    _days = List.generate(28, (i) => today.add(Duration(days: i)));
   }
 
   /// Normalises a DateTime to midnight (date-only comparison).
   DateTime _normalise(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  /// Short weekday label (Mon, Tue …) for a 1-indexed weekday.
+  String _weekdayLabel(AppLocalizations l10n, DateTime d) {
+    switch (d.weekday) {
+      case 1:
+        return l10n.weekdayMon;
+      case 2:
+        return l10n.weekdayTue;
+      case 3:
+        return l10n.weekdayWed;
+      case 4:
+        return l10n.weekdayThu;
+      case 5:
+        return l10n.weekdayFri;
+      case 6:
+        return l10n.weekdaySat;
+      case 7:
+        return l10n.weekdaySun;
+      default:
+        return '';
+    }
+  }
 
   Future<void> _bookSlot(Slot slot, String trainerName) async {
     final l10n = AppLocalizations.of(context);
@@ -86,9 +113,8 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final today = _normalise(DateTime.now());
-    final lastDay = today.add(const Duration(days: 60));
 
-    // Trainer name for confirm dialog.
+    // Trainer name for header + confirm dialog.
     final trainerName = ref
             .watch(trainerProvider(widget.trainerUid))
             .asData
@@ -96,96 +122,73 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
             ?.displayName ??
         '';
 
-    // Slots for the selected day (or null when no day selected).
-    final normalised = _selectedDay != null ? _normalise(_selectedDay!) : null;
-    final AsyncValue<List<Slot>>? slotsValue = normalised != null
-        ? ref.watch(availableSlotsProvider(
-            (trainerUid: widget.trainerUid, day: normalised)))
-        : null;
+    // Slots for the selected day.
+    final slotsValue = ref.watch(availableSlotsProvider(
+        (trainerUid: widget.trainerUid, day: _selectedDay)));
 
     return Scaffold(
       appBar: AppBar(),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 32),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Calendar ──
-          TableCalendar(
-            firstDay: today,
-            lastDay: lastDay,
-            focusedDay: _focusedDay,
-            selectedDayPredicate: (d) =>
-                _selectedDay != null && isSameDay(d, _selectedDay!),
-            onDaySelected: (selected, focused) {
-              setState(() {
-                _selectedDay = _normalise(selected);
-                _focusedDay = focused;
-              });
-            },
-            calendarFormat: CalendarFormat.month,
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
+          // ── Header with SpeedLines backdrop ──
+          Stack(
+            children: [
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.18,
+                  child: SpeedLines(density: 18, seed: 42),
+                ),
               ),
-              leftChevronIcon: Icon(
-                Icons.chevron_left,
-                color: Theme.of(context).colorScheme.onSurface,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Eyebrow(l10n.navSchedule),
+                    const SizedBox(height: 8),
+                    DisplayTitle(trainerName.isEmpty ? '—' : trainerName),
+                  ],
+                ),
               ),
-              rightChevronIcon: Icon(
-                Icons.chevron_right,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-            calendarStyle: CalendarStyle(
-              outsideDaysVisible: false,
-              defaultTextStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-              weekendTextStyle: const TextStyle(color: kMutedDark),
-              selectedDecoration: const BoxDecoration(
-                color: kVolt,
-                shape: BoxShape.circle,
-              ),
-              selectedTextStyle: const TextStyle(
-                color: kInk,
-                fontWeight: FontWeight.w800,
-              ),
-              todayDecoration: BoxDecoration(
-                border: Border.all(color: kVolt, width: 2),
-                shape: BoxShape.circle,
-              ),
-              todayTextStyle: const TextStyle(
-                color: kVolt,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            daysOfWeekStyle: DaysOfWeekStyle(
-              weekdayStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
-              weekendStyle: const TextStyle(
-                color: kMutedDark,
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
+            ],
+          ),
+
+          // ── Horizontal date rail ──
+          SizedBox(
+            height: 80,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _days.length,
+              itemBuilder: (context, i) {
+                final day = _days[i];
+                final isSelected = day == _selectedDay;
+                final isToday = day == today;
+                return _DayCell(
+                  day: day,
+                  label: _weekdayLabel(l10n, day),
+                  isSelected: isSelected,
+                  isToday: isToday,
+                  onTap: () {
+                    if (_selectedDay != day) {
+                      setState(() => _selectedDay = day);
+                    }
+                  },
+                );
+              },
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // ── Slots section ──
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
               children: [
                 SectionHeader(l10n.availableSlots),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
                 _buildSlotContent(context, l10n, slotsValue, trainerName),
               ],
             ),
@@ -198,48 +201,182 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
   Widget _buildSlotContent(
     BuildContext context,
     AppLocalizations l10n,
-    AsyncValue<List<Slot>>? slotsValue,
+    AsyncValue<List<Slot>> slotsValue,
     String trainerName,
   ) {
-    if (slotsValue == null) {
-      return Center(
-        child: Text(l10n.selectDay,
-            style: Theme.of(context).textTheme.bodyMedium),
-      );
-    }
     return slotsValue.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, _) => Text(l10n.errorGeneric),
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32),
+          child: CircularProgressIndicator(),
+        ),
+      ),
+      error: (_, _) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Text(l10n.errorGeneric,
+            style: Theme.of(context).textTheme.bodyMedium),
+      ),
       data: (slots) {
         if (slots.isEmpty) {
-          return Center(
-            child: Text(l10n.noSlotsForDay,
-                style: Theme.of(context).textTheme.bodyMedium),
+          return SizedBox(
+            height: 140,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned(
+                  child: Opacity(
+                    opacity: 0.08,
+                    child: GhostText('0', size: 120, color: kVolt),
+                  ),
+                ),
+                Text(
+                  l10n.noSlotsForDay,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           );
         }
         return Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: slots.map((slot) {
-            final startLabel = slot.start;
-            return OutlinedButton(
-              onPressed: () => _bookSlot(slot, trainerName),
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(80, 44),
-                side: const BorderSide(color: kVolt, width: 1.5),
-                foregroundColor: kVolt,
-              ),
-              child: Text(
-                startLabel,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  color: kVolt,
-                ),
+          spacing: 10,
+          runSpacing: 10,
+          children: slots.asMap().entries.map((entry) {
+            final i = entry.key;
+            final slot = entry.value;
+            return Reveal(
+              index: i,
+              child: _SlotBlock(
+                slot: slot,
+                onTap: () => _bookSlot(slot, trainerName),
               ),
             );
           }).toList(),
         );
       },
+    );
+  }
+}
+
+// ── Day cell ──────────────────────────────────────────────────────────────────
+
+class _DayCell extends StatelessWidget {
+  const _DayCell({
+    required this.day,
+    required this.label,
+    required this.isSelected,
+    required this.isToday,
+    required this.onTap,
+  });
+
+  final DateTime day;
+  final String label;
+  final bool isSelected;
+  final bool isToday;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final bg = isSelected ? kVolt : kInkElevated;
+    final textColor = isSelected ? kInk : kOffWhite;
+    final mutedColor = isSelected ? kInk.withValues(alpha: 0.7) : kMutedDark;
+
+    Border? border;
+    if (isSelected) {
+      border = null; // no separate border when filled volt
+    } else if (isToday) {
+      border = Border.all(color: kVolt, width: 1.5);
+    } else {
+      border = Border.all(color: kLineDark, width: 1);
+    }
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        child: Transform(
+          transform: isSelected ? Matrix4.skewX(-0.06) : Matrix4.identity(),
+          alignment: Alignment.center,
+          child: Container(
+            width: 56,
+            height: 64,
+            decoration: BoxDecoration(
+              color: bg,
+              border: border,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  label.toUpperCase(),
+                  style: GoogleFonts.interTight(
+                    color: mutedColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${day.day}',
+                  style: GoogleFonts.archivoBlack(
+                    color: textColor,
+                    fontSize: 26,
+                    height: 1.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Slot block ────────────────────────────────────────────────────────────────
+
+class _SlotBlock extends StatelessWidget {
+  const _SlotBlock({required this.slot, required this.onTap});
+
+  final Slot slot;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 80, minHeight: 56),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: kInkElevated,
+          border: Border.all(color: kVolt, width: 1.5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              slot.start,
+              style: GoogleFonts.archivoBlack(
+                color: kVolt,
+                fontSize: 18,
+                height: 1.1,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '–${slot.end}',
+              style: GoogleFonts.interTight(
+                color: kMutedDark,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

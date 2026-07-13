@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:sportin_clone/app/kinetic.dart';
 import 'package:sportin_clone/app/theme.dart';
@@ -227,10 +228,10 @@ class _AvailabilityEditorScreenState
           DisplayTitle(l10n.weeklyAvailability),
           const SizedBox(height: 24),
 
-          // ── Slot duration selector ──
+          // ── Slot duration selector — skewed volt chips ──
           Text(
             l10n.slotDuration.toUpperCase(),
-            style: TextStyle(
+            style: GoogleFonts.interTight(
               color: kMutedDark,
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -238,20 +239,48 @@ class _AvailabilityEditorScreenState
             ),
           ),
           const SizedBox(height: 10),
-          SegmentedButton<int>(
-            segments: [30, 45, 60, 90]
-                .map((m) => ButtonSegment<int>(
-                      value: m,
-                      label: Text('$m ${l10n.minutesShort}'),
-                    ))
-                .toList(),
-            selected: {_localTemplate!.slotMinutes},
-            onSelectionChanged: (s) {
-              setState(() {
-                _localTemplate =
-                    _localTemplate!.copyWith(slotMinutes: s.first);
-              });
-            },
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [30, 45, 60, 90].map((m) {
+              final selected = _localTemplate!.slotMinutes == m;
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _localTemplate =
+                        _localTemplate!.copyWith(slotMinutes: m);
+                  });
+                },
+                child: Transform(
+                  transform: Matrix4.skewX(-0.10),
+                  alignment: Alignment.center,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: selected ? kVolt : Colors.transparent,
+                      border: Border.all(
+                        color: selected ? kVolt : kLineDark,
+                        width: selected ? 0 : 1.5,
+                      ),
+                    ),
+                    child: Transform(
+                      transform: Matrix4.skewX(0.10),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$m ${l10n.minutesShort}'.toUpperCase(),
+                        style: GoogleFonts.interTight(
+                          color: selected ? kInk : kOffWhite,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 12,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
           const SizedBox(height: 28),
 
@@ -260,7 +289,8 @@ class _AvailabilityEditorScreenState
             final ranges =
                 List<TimeRange>.from(_localTemplate!.weekly[day] ?? []);
             return [
-              SectionHeader(_weekdayLabel(l10n, day)),
+              // Kinetik section marker: skewed volt bar + uppercase day name.
+              _WeekdayHeader(label: _weekdayLabel(l10n, day)),
               const SizedBox(height: 8),
               if (ranges.isEmpty)
                 Padding(
@@ -278,10 +308,18 @@ class _AvailabilityEditorScreenState
                   onDelete: () => _removeTimeRange(day, i),
                 );
               }),
+              // "+ Dodaj interval" affordance
               TextButton.icon(
                 onPressed: () => _addTimeRange(l10n, day),
-                icon: const Icon(Icons.add, size: 18),
-                label: Text(l10n.addTimeRange),
+                icon: const Icon(Icons.add, size: 18, color: kVolt),
+                label: Text(
+                  l10n.addTimeRange,
+                  style: GoogleFonts.interTight(
+                    color: kVolt,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
               ),
               const SizedBox(height: 8),
             ];
@@ -321,8 +359,15 @@ class _AvailabilityEditorScreenState
           const SizedBox(height: 8),
           TextButton.icon(
             onPressed: () => _addException(l10n, uid),
-            icon: const Icon(Icons.add, size: 18),
-            label: Text(l10n.addException),
+            icon: const Icon(Icons.add, size: 18, color: kVolt),
+            label: Text(
+              l10n.addException,
+              style: GoogleFonts.interTight(
+                color: kVolt,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+              ),
+            ),
           ),
         ],
       ),
@@ -332,6 +377,36 @@ class _AvailabilityEditorScreenState
 
 // ─── Helper widgets ─────────────────────────────────────────────────────────
 
+/// Kinetik weekday section header: skewed volt marker + uppercase day name.
+class _WeekdayHeader extends StatelessWidget {
+  const _WeekdayHeader({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Transform(
+          transform: Matrix4.skewX(-0.35),
+          alignment: Alignment.center,
+          child: Container(width: 10, height: 20, color: kVolt),
+        ),
+        const SizedBox(width: 10),
+        Text(
+          label.toUpperCase(),
+          style: GoogleFonts.interTight(
+            color: kOffWhite,
+            fontWeight: FontWeight.w800,
+            fontSize: 13,
+            letterSpacing: 1.6,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _TimeRangeRow extends StatelessWidget {
   const _TimeRangeRow({required this.range, required this.onDelete});
 
@@ -340,21 +415,33 @@ class _TimeRangeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            '${range.start} – ${range.end}',
-            style: theme.textTheme.bodyLarge,
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
+      decoration: BoxDecoration(
+        color: kInkElevated,
+        border: Border.all(color: kLineDark, width: 1),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              '${range.start} – ${range.end}',
+              style: GoogleFonts.archivoBlack(
+                color: kOffWhite,
+                fontSize: 15,
+              ),
+            ),
           ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.delete_outline, color: kDanger),
-          onPressed: onDelete,
-          tooltip: 'Ukloni',
-        ),
-      ],
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: kDanger, size: 20),
+            onPressed: onDelete,
+            tooltip: 'Ukloni',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -369,14 +456,18 @@ class _ExceptionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final dateLabel =
-        DateFormat.yMMMEd('sr').format(exception.date);
+    final dateLabel = DateFormat.yMMMEd('sr').format(exception.date);
     final timeLabel = exception.allDay
         ? l10n.blockWholeDay
         : '${exception.start ?? ''} – ${exception.end ?? ''}';
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
+      decoration: BoxDecoration(
+        color: kInkElevated,
+        border: Border.all(color: kLineDark, width: 1),
+      ),
       child: Row(
         children: [
           Expanded(
@@ -384,13 +475,16 @@ class _ExceptionRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(dateLabel, style: theme.textTheme.bodyLarge),
+                const SizedBox(height: 2),
                 Text(timeLabel, style: theme.textTheme.bodyMedium),
               ],
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline, color: kDanger),
+            icon: const Icon(Icons.delete_outline, color: kDanger, size: 20),
             onPressed: onDelete,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
           ),
         ],
       ),
@@ -437,8 +531,7 @@ class _ExceptionDialogState extends State<_ExceptionDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final dateLabel =
-        DateFormat.yMMMEd('sr').format(widget.date);
+    final dateLabel = DateFormat.yMMMEd('sr').format(widget.date);
 
     return AlertDialog(
       title: Text(l10n.addException),

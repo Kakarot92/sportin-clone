@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sportin_clone/app/kinetic.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
@@ -133,7 +134,6 @@ class _StudioClosedDaysScreenState
       );
     }
 
-    final theme = Theme.of(context);
     final sortedDates = _local!.closedDates.toList()..sort();
 
     return Scaffold(
@@ -146,24 +146,57 @@ class _StudioClosedDaysScreenState
           DisplayTitle(l10n.studioClosedDays),
           const SizedBox(height: 28),
 
-          // ── Closed weekdays ──
+          // ── Closed weekdays — volt skewed chips ──
           SectionHeader(l10n.closedWeekdaysLabel),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
-            runSpacing: 8,
+            runSpacing: 10,
             children: List.generate(7, (i) {
               final day = i + 1;
               final selected = _local!.closedWeekdays.contains(day);
-              return FilterChip(
-                label: Text(_weekdayLabel(l10n, day)),
-                selected: selected,
-                onSelected: (v) => _toggleWeekday(day, v),
-                selectedColor: kVolt,
-                checkmarkColor: kInk,
-                labelStyle: TextStyle(
-                  color: selected ? kInk : theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.w700,
+              return GestureDetector(
+                onTap: () => _toggleWeekday(day, !selected),
+                child: Transform(
+                  transform: Matrix4.skewX(-0.10),
+                  alignment: Alignment.center,
+                  child: Container(
+                    constraints: const BoxConstraints(minWidth: 56, minHeight: 48),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: selected ? kVolt : Colors.transparent,
+                      border: Border.all(
+                        color: selected ? kVolt : kLineDark,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Transform(
+                      transform: Matrix4.skewX(0.10),
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (selected)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 6),
+                              child: Icon(Icons.check,
+                                  size: 14,
+                                  color: selected ? kInk : kOffWhite),
+                            ),
+                          Text(
+                            _weekdayLabel(l10n, day).toUpperCase(),
+                            style: GoogleFonts.interTight(
+                              color: selected ? kInk : kOffWhite,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 12,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               );
             }),
@@ -174,7 +207,7 @@ class _StudioClosedDaysScreenState
           SectionHeader(l10n.closedDatesLabel),
           const SizedBox(height: 12),
           if (sortedDates.isEmpty)
-            Text('—', style: theme.textTheme.bodyMedium)
+            Text('—', style: Theme.of(context).textTheme.bodyMedium)
           else
             ...sortedDates.map((d) => _DateRow(
                   dateStr: d,
@@ -183,8 +216,15 @@ class _StudioClosedDaysScreenState
           const SizedBox(height: 4),
           TextButton.icon(
             onPressed: _addClosedDate,
-            icon: const Icon(Icons.add, size: 18),
-            label: Text(l10n.addClosedDate),
+            icon: const Icon(Icons.add, size: 18, color: kVolt),
+            label: Text(
+              l10n.addClosedDate,
+              style: GoogleFonts.interTight(
+                color: kVolt,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+              ),
+            ),
           ),
 
           const SizedBox(height: 24),
@@ -209,16 +249,26 @@ class _DateRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Row(
-      children: [
-        Expanded(
-          child: Text(dateStr, style: theme.textTheme.bodyLarge),
-        ),
-        IconButton(
-          icon: const Icon(Icons.delete_outline, color: kDanger),
-          onPressed: onDelete,
-        ),
-      ],
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
+      decoration: BoxDecoration(
+        color: kInkElevated,
+        border: Border.all(color: kLineDark, width: 1),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(dateStr, style: theme.textTheme.bodyLarge),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_outline, color: kDanger, size: 20),
+            onPressed: onDelete,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+          ),
+        ],
+      ),
     );
   }
 }

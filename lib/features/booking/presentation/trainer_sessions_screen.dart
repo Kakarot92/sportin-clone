@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:sportin_clone/app/kinetic.dart';
+import 'package:sportin_clone/app/kinetic_effects.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/features/booking/application/booking_providers.dart';
@@ -35,32 +37,57 @@ class TrainerSessionsScreen extends ConsumerWidget {
       body: sessionsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => Center(child: Text(l10n.errorGeneric)),
-        data: (sessions) => ListView.separated(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-          itemCount: sessions.length + 1,
-          separatorBuilder: (_, i) => SizedBox(height: i == 0 ? 24 : 10),
-          itemBuilder: (context, i) {
-            if (i == 0) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        data: (sessions) => CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Stack(
                 children: [
-                  const Eyebrow('Trener'),
-                  const SizedBox(height: 10),
-                  DisplayTitle(l10n.mySessions),
-                  if (sessions.isEmpty) ...[
-                    const SizedBox(height: 24),
-                    Center(
-                      child: Text(
-                        l10n.noSessions,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                  Positioned.fill(
+                    child: Opacity(
+                      opacity: 0.15,
+                      child: SpeedLines(density: 16, seed: 21),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Eyebrow('Trener'),
+                        const SizedBox(height: 10),
+                        DisplayTitle(l10n.mySessions),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (sessions.isEmpty)
+              SliverFillRemaining(
+                child: Center(
+                  child: Text(
+                    l10n.noSessions,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, i) => Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Reveal(
+                        index: i,
+                        child: _SessionCard(session: sessions[i]),
                       ),
                     ),
-                  ],
-                ],
-              );
-            }
-            return _SessionCard(session: sessions[i - 1]);
-          },
+                    childCount: sessions.length,
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -90,8 +117,7 @@ class _SessionCard extends StatelessWidget {
     }
 
     final isCancelled = session.status == 'cancelled';
-    final badgeLabel =
-        isCancelled ? l10n.statusCancelled : l10n.statusBooked;
+    final badgeLabel = isCancelled ? l10n.statusCancelled : l10n.statusBooked;
 
     // Show a shortened client uid (first 8 chars) if no name available.
     final clientShort = session.clientUid.length > 8
@@ -102,21 +128,27 @@ class _SessionCard extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       decoration: BoxDecoration(
         color: kInkElevated,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: theme.dividerColor),
+        border: Border.all(
+            color: isCancelled ? kDanger.withValues(alpha: 0.4) : kLineDark),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(formattedDate, style: theme.textTheme.titleMedium),
-                const SizedBox(height: 4),
+                // Big Archivo Black time
                 Text(
                   '${session.start}–${session.end}',
-                  style: theme.textTheme.bodyMedium,
+                  style: GoogleFonts.archivoBlack(
+                    color: kOffWhite,
+                    fontSize: 20,
+                    height: 1.0,
+                  ),
                 ),
+                const SizedBox(height: 4),
+                Text(formattedDate, style: theme.textTheme.bodyMedium),
                 const SizedBox(height: 4),
                 Text(
                   clientShort,
@@ -125,11 +157,45 @@ class _SessionCard extends StatelessWidget {
               ],
             ),
           ),
-          VoltBadge(
-            badgeLabel,
-            filled: !isCancelled,
-          ),
+          const SizedBox(width: 8),
+          isCancelled
+              ? _DangerBadge(badgeLabel)
+              : VoltBadge(badgeLabel, filled: true),
         ],
+      ),
+    );
+  }
+}
+
+/// Skewed danger-coloured badge for cancelled sessions.
+class _DangerBadge extends StatelessWidget {
+  const _DangerBadge(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform(
+      transform: Matrix4.skewX(-0.2),
+      alignment: Alignment.center,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          border: Border.all(color: kDanger, width: 1.5),
+        ),
+        child: Transform(
+          transform: Matrix4.skewX(0.2),
+          alignment: Alignment.center,
+          child: Text(
+            text.toUpperCase(),
+            style: GoogleFonts.interTight(
+              color: kDanger,
+              fontWeight: FontWeight.w800,
+              fontSize: 11,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
       ),
     );
   }

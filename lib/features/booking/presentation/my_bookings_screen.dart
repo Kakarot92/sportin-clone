@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:sportin_clone/app/kinetic.dart';
+import 'package:sportin_clone/app/kinetic_effects.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/features/booking/application/booking_providers.dart';
@@ -24,47 +26,91 @@ class MyBookingsScreen extends ConsumerWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          bottom: TabBar(
-            labelColor: kVolt,
-            unselectedLabelColor: kMutedDark,
-            indicatorColor: kVolt,
-            tabs: [
-              Tab(text: l10n.upcoming.toUpperCase()),
-              Tab(text: l10n.history.toUpperCase()),
-            ],
-          ),
-        ),
         body: me == null
             ? const Center(child: CircularProgressIndicator())
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+            : NestedScrollView(
+                headerSliverBuilder: (context, _) => [
+                  SliverToBoxAdapter(
+                    child: Stack(
                       children: [
-                        Eyebrow('Termini'),
-                        const SizedBox(height: 10),
-                        DisplayTitle(l10n.myBookings),
-                        const SizedBox(height: 16),
+                        Positioned.fill(
+                          child: Opacity(
+                            opacity: 0.15,
+                            child: SpeedLines(density: 16, seed: 13),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Eyebrow('Termini'),
+                              const SizedBox(height: 10),
+                              DisplayTitle(l10n.myBookings),
+                              const SizedBox(height: 16),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        _UpcomingTab(uid: me.uid),
-                        _HistoryTab(uid: me.uid),
-                      ],
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _TabBarDelegate(
+                      TabBar(
+                        labelColor: kVolt,
+                        unselectedLabelColor: kMutedDark,
+                        indicatorColor: kVolt,
+                        indicatorWeight: 2,
+                        labelStyle: GoogleFonts.interTight(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 12,
+                          letterSpacing: 1.4,
+                        ),
+                        tabs: [
+                          Tab(text: l10n.upcoming.toUpperCase()),
+                          Tab(text: l10n.history.toUpperCase()),
+                        ],
+                      ),
                     ),
                   ),
                 ],
+                body: TabBarView(
+                  children: [
+                    _UpcomingTab(uid: me.uid),
+                    _HistoryTab(uid: me.uid),
+                  ],
+                ),
               ),
       ),
     );
   }
+}
+
+// ── Sliver tab bar delegate ───────────────────────────────────────────────────
+
+class _TabBarDelegate extends SliverPersistentHeaderDelegate {
+  const _TabBarDelegate(this.tabBar);
+
+  final TabBar tabBar;
+
+  @override
+  double get minExtent => tabBar.preferredSize.height;
+
+  @override
+  double get maxExtent => tabBar.preferredSize.height;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_TabBarDelegate oldDelegate) => false;
 }
 
 // ─── Upcoming tab ─────────────────────────────────────────────────────────────
@@ -91,11 +137,16 @@ class _UpcomingTab extends ConsumerWidget {
             ),
           );
         }
-        return ListView.separated(
+        return ListView.builder(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           itemCount: bookings.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 10),
-          itemBuilder: (_, i) => _BookingCard(booking: bookings[i]),
+          itemBuilder: (_, i) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Reveal(
+              index: i,
+              child: _BookingCard(booking: bookings[i]),
+            ),
+          ),
         );
       },
     );
@@ -126,11 +177,16 @@ class _HistoryTab extends ConsumerWidget {
             ),
           );
         }
-        return ListView.separated(
+        return ListView.builder(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           itemCount: bookings.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 10),
-          itemBuilder: (_, i) => _BookingCard(booking: bookings[i]),
+          itemBuilder: (_, i) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Reveal(
+              index: i,
+              child: _BookingCard(booking: bookings[i]),
+            ),
+          ),
         );
       },
     );
@@ -159,7 +215,7 @@ class _BookingCard extends ConsumerWidget {
       // fall back to raw string
     }
 
-    // Trainer name (optional enhancement).
+    // Trainer name.
     final trainerName = ref
         .watch(trainerProvider(booking.trainerUid))
         .asData
@@ -167,41 +223,79 @@ class _BookingCard extends ConsumerWidget {
         ?.displayName;
 
     final isCancelled = booking.status == 'cancelled';
-    final badgeLabel =
-        isCancelled ? l10n.statusCancelled : l10n.statusBooked;
+    final badgeLabel = isCancelled ? l10n.statusCancelled : l10n.statusBooked;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       decoration: BoxDecoration(
         color: kInkElevated,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: theme.dividerColor),
+        border: Border.all(color: isCancelled ? kDanger.withValues(alpha: 0.4) : kLineDark),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(formattedDate, style: theme.textTheme.titleMedium),
-                const SizedBox(height: 4),
+                // Big Archivo Black time
                 Text(
                   '${booking.start}–${booking.end}',
-                  style: theme.textTheme.bodyMedium,
+                  style: GoogleFonts.archivoBlack(
+                    color: kOffWhite,
+                    fontSize: 20,
+                    height: 1.0,
+                  ),
                 ),
+                const SizedBox(height: 4),
+                Text(formattedDate, style: theme.textTheme.bodyMedium),
                 if (trainerName != null && trainerName.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(trainerName,
-                      style: theme.textTheme.bodyMedium),
+                  Text(trainerName, style: theme.textTheme.bodyMedium),
                 ],
               ],
             ),
           ),
-          VoltBadge(
-            badgeLabel,
-            filled: !isCancelled,
-          ),
+          const SizedBox(width: 8),
+          // Status badge — kDanger tone for cancelled
+          isCancelled
+              ? _DangerBadge(badgeLabel)
+              : VoltBadge(badgeLabel, filled: true),
         ],
+      ),
+    );
+  }
+}
+
+/// Skewed danger-coloured badge for cancelled bookings.
+class _DangerBadge extends StatelessWidget {
+  const _DangerBadge(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform(
+      transform: Matrix4.skewX(-0.2),
+      alignment: Alignment.center,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          border: Border.all(color: kDanger, width: 1.5),
+        ),
+        child: Transform(
+          transform: Matrix4.skewX(0.2),
+          alignment: Alignment.center,
+          child: Text(
+            text.toUpperCase(),
+            style: GoogleFonts.interTight(
+              color: kDanger,
+              fontWeight: FontWeight.w800,
+              fontSize: 11,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
       ),
     );
   }
