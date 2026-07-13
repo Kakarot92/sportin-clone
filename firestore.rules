@@ -72,11 +72,22 @@ service cloud.firestore {
     }
 
     // Bookings: any signed-in user may read.
-    // Write access is intentionally false in M4 — booking creation is
-    // implemented in M5 and will replace this rule.
+    // M5: create/update/delete rules for booking creation and cancellation.
     match /bookings/{id} {
       allow read: if isSignedIn();
-      allow write: if false; // M5 will add create/update/cancel rules here
+      // A client creates their own booking (status must start as 'booked').
+      allow create: if isSignedIn()
+        && request.resource.data.clientUid == request.auth.uid
+        && request.resource.data.status == 'booked';
+      // Update: the booking's client (e.g. rebooking a freed slot / future cancel),
+      // the trainer for that booking, or an admin.
+      allow update: if isAdmin()
+        || (isSignedIn() && resource.data.clientUid == request.auth.uid)
+        || (isSignedIn() && resource.data.trainerUid == request.auth.uid)
+        || (isSignedIn() && resource.data.status == 'cancelled'
+            && request.resource.data.clientUid == request.auth.uid
+            && request.resource.data.status == 'booked');
+      allow delete: if isAdmin();
     }
 
     // Everything else is denied until its own milestone adds explicit rules.

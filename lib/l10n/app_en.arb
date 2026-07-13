@@ -99,5 +99,31 @@
   "weekdayThu": "Thu",
   "weekdayFri": "Fri",
   "weekdaySat": "Sat",
-  "weekdaySun": "Sun"
+  "weekdaySun": "Sun",
+  "book": "Book",
+  "bookConfirmTitle": "Confirm booking",
+  "bookConfirmBody": "Book slot {time} with {trainer}?",
+  "@bookConfirmBody": {
+    "description": "Booking confirmation dialog body text",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "trainer": {
+        "type": "String"
+      }
+    }
+  },
+  "booked": "Booked",
+  "slotTakenError": "That slot was just taken.",
+  "pastSlotError": "You cannot book a slot in the past.",
+  "myBookings": "My bookings",
+  "upcoming": "Upcoming",
+  "history": "History",
+  "mySessions": "My sessions",
+  "noUpcomingBookings": "You have no upcoming bookings.",
+  "noBookingHistory": "No booking history.",
+  "noSessions": "No sessions scheduled.",
+  "statusBooked": "Booked",
+  "statusCancelled": "Cancelled"
 }

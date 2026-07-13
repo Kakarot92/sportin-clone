@@ -50,4 +50,18 @@ class Booking {
         'end': end,
         'status': status,
       };
+
+  /// Deterministic document ID for a booking slot.
+  ///
+  /// Two clients racing to book the same (trainer, date, start) will resolve
+  /// to the same Firestore document, making the transaction idempotent and
+  /// preventing double-bookings (AS-027, AS-028).
+  ///
+  /// Example: `bookingDocId('trainer-djole', '2026-07-13', '09:00')`
+  /// returns `'trainer-djole_2026-07-13_0900'`.
+  static String bookingDocId(
+      String trainerUid, String date, String start) {
+    final sanitizedStart = start.replaceAll(':', '');
+    return '${trainerUid}_${date}_$sanitizedStart';
+  }
 }

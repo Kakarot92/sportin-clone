@@ -314,4 +314,51 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get weekdaySun => 'Ned';
+
+  @override
+  String get book => 'Rezerviši';
+
+  @override
+  String get bookConfirmTitle => 'Potvrda rezervacije';
+
+  @override
+  String bookConfirmBody(String time, String trainer) {
+    return 'Rezerviši termin $time sa $trainer?';
+  }
+
+  @override
+  String get booked => 'Rezervisano';
+
+  @override
+  String get slotTakenError => 'Termin je upravo zauzet.';
+
+  @override
+  String get pastSlotError => 'Ne možeš rezervisati termin u prošlosti.';
+
+  @override
+  String get myBookings => 'Moji termini';
+
+  @override
+  String get upcoming => 'Predstojeći';
+
+  @override
+  String get history => 'Istorija';
+
+  @override
+  String get mySessions => 'Moje sesije';
+
+  @override
+  String get noUpcomingBookings => 'Nemaš predstojećih termina.';
+
+  @override
+  String get noBookingHistory => 'Nema istorije.';
+
+  @override
+  String get noSessions => 'Nema zakazanih sesija.';
+
+  @override
+  String get statusBooked => 'Rezervisano';
+
+  @override
+  String get statusCancelled => 'Otkazano';
 }

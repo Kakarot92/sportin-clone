@@ -315,4 +315,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get weekdaySun => 'Sun';
+
+  @override
+  String get book => 'Book';
+
+  @override
+  String get bookConfirmTitle => 'Confirm booking';
+
+  @override
+  String bookConfirmBody(String time, String trainer) {
+    return 'Book slot $time with $trainer?';
+  }
+
+  @override
+  String get booked => 'Booked';
+
+  @override
+  String get slotTakenError => 'That slot was just taken.';
+
+  @override
+  String get pastSlotError => 'You cannot book a slot in the past.';
+
+  @override
+  String get myBookings => 'My bookings';
+
+  @override
+  String get upcoming => 'Upcoming';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get mySessions => 'My sessions';
+
+  @override
+  String get noUpcomingBookings => 'You have no upcoming bookings.';
+
+  @override
+  String get noBookingHistory => 'No booking history.';
+
+  @override
+  String get noSessions => 'No sessions scheduled.';
+
+  @override
+  String get statusBooked => 'Booked';
+
+  @override
+  String get statusCancelled => 'Cancelled';
 }

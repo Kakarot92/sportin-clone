@@ -697,6 +697,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sun'**
   String get weekdaySun;
+
+  /// No description provided for @book.
+  ///
+  /// In en, this message translates to:
+  /// **'Book'**
+  String get book;
+
+  /// No description provided for @bookConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm booking'**
+  String get bookConfirmTitle;
+
+  /// Booking confirmation dialog body text
+  ///
+  /// In en, this message translates to:
+  /// **'Book slot {time} with {trainer}?'**
+  String bookConfirmBody(String time, String trainer);
+
+  /// No description provided for @booked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get booked;
+
+  /// No description provided for @slotTakenError.
+  ///
+  /// In en, this message translates to:
+  /// **'That slot was just taken.'**
+  String get slotTakenError;
+
+  /// No description provided for @pastSlotError.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot book a slot in the past.'**
+  String get pastSlotError;
+
+  /// No description provided for @myBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'My bookings'**
+  String get myBookings;
+
+  /// No description provided for @upcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcoming;
+
+  /// No description provided for @history.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get history;
+
+  /// No description provided for @mySessions.
+  ///
+  /// In en, this message translates to:
+  /// **'My sessions'**
+  String get mySessions;
+
+  /// No description provided for @noUpcomingBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no upcoming bookings.'**
+  String get noUpcomingBookings;
+
+  /// No description provided for @noBookingHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No booking history.'**
+  String get noBookingHistory;
+
+  /// No description provided for @noSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions scheduled.'**
+  String get noSessions;
+
+  /// No description provided for @statusBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get statusBooked;
+
+  /// No description provided for @statusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get statusCancelled;
 }
 
 class _AppLocalizationsDelegate

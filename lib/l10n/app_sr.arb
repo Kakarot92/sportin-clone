@@ -99,5 +99,31 @@
   "weekdayThu": "Čet",
   "weekdayFri": "Pet",
   "weekdaySat": "Sub",
-  "weekdaySun": "Ned"
+  "weekdaySun": "Ned",
+  "book": "Rezerviši",
+  "bookConfirmTitle": "Potvrda rezervacije",
+  "bookConfirmBody": "Rezerviši termin {time} sa {trainer}?",
+  "@bookConfirmBody": {
+    "description": "Tekst potvrde rezervacije",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "trainer": {
+        "type": "String"
+      }
+    }
+  },
+  "booked": "Rezervisano",
+  "slotTakenError": "Termin je upravo zauzet.",
+  "pastSlotError": "Ne možeš rezervisati termin u prošlosti.",
+  "myBookings": "Moji termini",
+  "upcoming": "Predstojeći",
+  "history": "Istorija",
+  "mySessions": "Moje sesije",
+  "noUpcomingBookings": "Nemaš predstojećih termina.",
+  "noBookingHistory": "Nema istorije.",
+  "noSessions": "Nema zakazanih sesija.",
+  "statusBooked": "Rezervisano",
+  "statusCancelled": "Otkazano"
 }
