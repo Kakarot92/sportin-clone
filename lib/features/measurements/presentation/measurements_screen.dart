@@ -13,6 +13,7 @@ class MeasurementsScreen extends StatelessWidget {
       title: l10n.measurementsTitle,
       message: l10n.measurementsPlaceholder,
       icon: Icons.straighten,
+      ghostLabel: 'KG',
     );
   }
 }

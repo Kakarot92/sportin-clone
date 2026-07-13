@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sportin_clone/app/kinetic.dart';
+import 'package:sportin_clone/app/kinetic_effects.dart';
 import 'package:sportin_clone/app/providers.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/core/models/app_user.dart';
@@ -29,95 +31,158 @@ class ProfileScreen extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
     final user = ref.watch(appUserProvider).asData?.value;
 
+    // Sequential reveal index — incremented inline so every visible item
+    // gets a unique stagger slot regardless of conditional rendering.
+    var ri = 0;
+
     return Scaffold(
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
           children: [
-            Eyebrow(l10n.accountSection),
+            // ── Header ────────────────────────────────────────────────────
+            Reveal(index: ri++, child: Eyebrow(l10n.accountSection)),
             const SizedBox(height: 10),
-            DisplayTitle(l10n.profileTitle),
+            Reveal(index: ri++, child: DisplayTitle(l10n.profileTitle)),
             const SizedBox(height: 24),
+
+            // ── Identity card + action buttons ────────────────────────────
             if (user != null) ...[
-              _AccountCard(user: user, roleLabel: _roleLabel(l10n, user.role)),
-              const SizedBox(height: 14),
-              OutlinedButton.icon(
-                onPressed: () => showDialog<void>(
-                  context: context,
-                  builder: (_) => _EditProfileDialog(user: user),
+              Reveal(
+                index: ri++,
+                child: _AccountCard(
+                  user: user,
+                  roleLabel: _roleLabel(l10n, user.role),
                 ),
-                icon: const Icon(Icons.edit_outlined),
-                label: Text(l10n.editProfile),
               ),
-              if (user.isTrainer)
-                OutlinedButton.icon(
-                  onPressed: () => context.push('/profile/trainer-edit'),
-                  icon: const Icon(Icons.badge_outlined),
-                  label: Text(l10n.editTrainerProfile),
+              const SizedBox(height: 16),
+
+              // Primary action — skewed volt button.
+              Reveal(
+                index: ri++,
+                child: VoltButton(
+                  label: l10n.editProfile,
+                  icon: Icons.edit_outlined,
+                  onPressed: () => showDialog<void>(
+                    context: context,
+                    builder: (_) => _EditProfileDialog(user: user),
+                  ),
                 ),
-              if (user.isTrainer)
-                OutlinedButton.icon(
-                  onPressed: () => context.push('/profile/availability'),
-                  icon: const Icon(Icons.calendar_today_outlined),
-                  label: Text(l10n.weeklyAvailability),
-                ),
-              if (user.isAdmin)
-                OutlinedButton.icon(
-                  onPressed: () => context.push('/profile/admin-users'),
-                  icon: const Icon(Icons.admin_panel_settings_outlined),
-                  label: Text(l10n.manageRoles),
-                ),
-              if (user.isAdmin)
-                OutlinedButton.icon(
-                  onPressed: () => context.push('/profile/studio'),
-                  icon: const Icon(Icons.store_outlined),
-                  label: Text(l10n.studioClosedDays),
-                ),
-              OutlinedButton.icon(
-                onPressed: () => context.push('/profile/bookings'),
-                icon: const Icon(Icons.event_outlined),
-                label: Text(l10n.myBookings),
               ),
+              const SizedBox(height: 8),
+
+              // Trainer-only secondary actions.
+              if (user.isTrainer) ...[
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/trainer-edit'),
+                    icon: const Icon(Icons.badge_outlined),
+                    label: Text(l10n.editTrainerProfile),
+                  ),
+                ),
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/availability'),
+                    icon: const Icon(Icons.calendar_today_outlined),
+                    label: Text(l10n.weeklyAvailability),
+                  ),
+                ),
+              ],
+
+              // Admin-only secondary actions.
+              if (user.isAdmin) ...[
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/admin-users'),
+                    icon: const Icon(Icons.admin_panel_settings_outlined),
+                    label: Text(l10n.manageRoles),
+                  ),
+                ),
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/studio'),
+                    icon: const Icon(Icons.store_outlined),
+                    label: Text(l10n.studioClosedDays),
+                  ),
+                ),
+              ],
+
+              // All-roles booking shortcut.
+              Reveal(
+                index: ri++,
+                child: OutlinedButton.icon(
+                  onPressed: () => context.push('/profile/bookings'),
+                  icon: const Icon(Icons.event_outlined),
+                  label: Text(l10n.myBookings),
+                ),
+              ),
+
+              // Trainer-only sessions view.
               if (user.isTrainer)
-                OutlinedButton.icon(
-                  onPressed: () => context.push('/profile/sessions'),
-                  icon: const Icon(Icons.people_outline),
-                  label: Text(l10n.mySessions),
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/sessions'),
+                    icon: const Icon(Icons.people_outline),
+                    label: Text(l10n.mySessions),
+                  ),
                 ),
             ],
+
+            // ── Appearance settings ───────────────────────────────────────
             const SizedBox(height: 28),
-            SectionHeader(l10n.settingsAppearance),
+            Reveal(index: ri++, child: SectionHeader(l10n.settingsAppearance)),
             const SizedBox(height: 14),
-            SegmentedButton<ThemeMode>(
-              segments: [
-                ButtonSegment(
-                    value: ThemeMode.system, label: Text(l10n.themeSystem)),
-                ButtonSegment(
-                    value: ThemeMode.light, label: Text(l10n.themeLight)),
-                ButtonSegment(value: ThemeMode.dark, label: Text(l10n.themeDark)),
-              ],
-              selected: {themeMode},
-              onSelectionChanged: (s) =>
-                  ref.read(themeModeProvider.notifier).set(s.first),
+            Reveal(
+              index: ri++,
+              child: SegmentedButton<ThemeMode>(
+                segments: [
+                  ButtonSegment(
+                      value: ThemeMode.system, label: Text(l10n.themeSystem)),
+                  ButtonSegment(
+                      value: ThemeMode.light, label: Text(l10n.themeLight)),
+                  ButtonSegment(
+                      value: ThemeMode.dark, label: Text(l10n.themeDark)),
+                ],
+                selected: {themeMode},
+                onSelectionChanged: (s) =>
+                    ref.read(themeModeProvider.notifier).set(s.first),
+              ),
             ),
+
+            // ── Language settings ─────────────────────────────────────────
             const SizedBox(height: 24),
-            SectionHeader(l10n.settingsLanguage),
+            Reveal(index: ri++, child: SectionHeader(l10n.settingsLanguage)),
             const SizedBox(height: 14),
-            SegmentedButton<String>(
-              segments: [
-                ButtonSegment(value: 'sr', label: Text(l10n.languageSerbian)),
-                ButtonSegment(value: 'en', label: Text(l10n.languageEnglish)),
-              ],
-              selected: {locale.languageCode},
-              onSelectionChanged: (s) =>
-                  ref.read(localeProvider.notifier).set(Locale(s.first)),
+            Reveal(
+              index: ri++,
+              child: SegmentedButton<String>(
+                segments: [
+                  ButtonSegment(
+                      value: 'sr', label: Text(l10n.languageSerbian)),
+                  ButtonSegment(
+                      value: 'en', label: Text(l10n.languageEnglish)),
+                ],
+                selected: {locale.languageCode},
+                onSelectionChanged: (s) =>
+                    ref.read(localeProvider.notifier).set(Locale(s.first)),
+              ),
             ),
+
+            // ── Sign-out ─────────────────────────────────────────────────
             const SizedBox(height: 32),
-            OutlinedButton.icon(
-              onPressed: () =>
-                  ref.read(authControllerProvider.notifier).signOut(),
-              icon: const Icon(Icons.logout),
-              label: Text(l10n.logout),
+            Reveal(
+              index: ri++,
+              child: OutlinedButton.icon(
+                onPressed: () =>
+                    ref.read(authControllerProvider.notifier).signOut(),
+                icon: const Icon(Icons.logout),
+                label: Text(l10n.logout),
+              ),
             ),
           ],
         ),
@@ -126,62 +191,96 @@ class ProfileScreen extends ConsumerWidget {
   }
 }
 
+// ── Account identity card ────────────────────────────────────────────────────
+
 class _AccountCard extends StatelessWidget {
   const _AccountCard({required this.user, required this.roleLabel});
 
   final AppUser user;
   final String roleLabel;
 
+  String get _displayName =>
+      user.displayName.isNotEmpty ? user.displayName : user.email;
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final initial = user.displayName.isNotEmpty
-        ? user.displayName.characters.first.toUpperCase()
-        : (user.email.isNotEmpty ? user.email.characters.first.toUpperCase() : '?');
+    final ghost =
+        _displayName.isNotEmpty ? _displayName[0].toUpperCase() : '?';
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: kInkElevated,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: theme.dividerColor),
+        border: Border.all(color: kLineDark),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
         children: [
-          Container(
-            width: 64,
-            height: 64,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              border: Border.all(color: kVolt, width: 2),
-              borderRadius: BorderRadius.circular(6),
+          // Ghost initial watermark for depth — clipped to card bounds.
+          Positioned(
+            right: -16,
+            top: -12,
+            child: GhostText(
+              ghost,
+              size: 96,
+              color: kLineDark,
+              strokeWidth: 1.0,
             ),
-            child: Text(initial, style: theme.textTheme.headlineSmall),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (user.displayName.isNotEmpty)
-                  Text(user.displayName, style: theme.textTheme.titleLarge),
-                const SizedBox(height: 6),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: VoltBadge(roleLabel),
+          // Identity row on top.
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              KineticInitials(
+                _displayName,
+                size: 64,
+                fontSize: 22,
+                voltBorder: true,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (user.displayName.isNotEmpty) ...[
+                      Text(
+                        user.displayName.toUpperCase(),
+                        style: GoogleFonts.archivoBlack(
+                          fontSize: 17,
+                          color: kOffWhite,
+                          height: 1.1,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                      ),
+                      const SizedBox(height: 6),
+                    ],
+                    VoltBadge(roleLabel),
+                    const SizedBox(height: 8),
+                    Text(
+                      user.email,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (user.phone.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        user.phone,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ],
                 ),
-                const SizedBox(height: 10),
-                Text(user.email, style: theme.textTheme.bodyMedium),
-                if (user.phone.isNotEmpty)
-                  Text(user.phone, style: theme.textTheme.bodyMedium),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 }
+
+// ── Edit-profile dialog ─────────────────────────────────────────────────────
 
 class _EditProfileDialog extends ConsumerStatefulWidget {
   const _EditProfileDialog({required this.user});

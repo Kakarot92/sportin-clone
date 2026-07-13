@@ -13,6 +13,7 @@ class ChatScreen extends StatelessWidget {
       title: l10n.chatTitle,
       message: l10n.chatPlaceholder,
       icon: Icons.chat_bubble_outline,
+      ghostLabel: '»',
     );
   }
 }
