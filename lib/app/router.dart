@@ -24,6 +24,34 @@ import '../features/trainers/presentation/trainer_profile_screen.dart';
 
 const _authRoutes = {'/login', '/signup', '/reset'};
 
+/// Kinetik slide-fade page transition for pushed (non-tab) screens.
+/// Mirrors the `kineticRoute` logic from kinetic_effects.dart.
+CustomTransitionPage<void> _kineticPage(LocalKey key, Widget child) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 420),
+    reverseTransitionDuration: const Duration(milliseconds: 300),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(
+        parent: animation,
+        curve: Curves.easeOutCubic,
+        reverseCurve: Curves.easeInCubic,
+      );
+      return FadeTransition(
+        opacity: curved,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0.08, 0),
+            end: Offset.zero,
+          ).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 final routerProvider = Provider<GoRouter>((ref) {
   // Bump this whenever auth state changes so go_router re-evaluates redirects.
   final refresh = ValueNotifier<int>(0);
@@ -70,13 +98,18 @@ final routerProvider = Provider<GoRouter>((ref) {
               routes: [
                 GoRoute(
                   path: 'trainer/:uid',
-                  builder: (context, state) =>
-                      TrainerProfileScreen(uid: state.pathParameters['uid']!),
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    TrainerProfileScreen(uid: state.pathParameters['uid']!),
+                  ),
                   routes: [
                     GoRoute(
                       path: 'slots',
-                      builder: (context, state) => TrainerSlotsScreen(
-                        trainerUid: state.pathParameters['uid']!,
+                      pageBuilder: (context, state) => _kineticPage(
+                        state.pageKey,
+                        TrainerSlotsScreen(
+                          trainerUid: state.pathParameters['uid']!,
+                        ),
                       ),
                     ),
                   ],
@@ -98,26 +131,47 @@ final routerProvider = Provider<GoRouter>((ref) {
               builder: (context, state) => const ProfileScreen(),
               routes: [
                 GoRoute(
-                    path: 'admin-users',
-                    builder: (context, state) => const AdminUsersScreen()),
+                  path: 'admin-users',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const AdminUsersScreen(),
+                  ),
+                ),
                 GoRoute(
-                    path: 'trainer-edit',
-                    builder: (context, state) => const TrainerEditScreen()),
+                  path: 'trainer-edit',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const TrainerEditScreen(),
+                  ),
+                ),
                 GoRoute(
-                    path: 'availability',
-                    builder: (context, state) =>
-                        const AvailabilityEditorScreen()),
+                  path: 'availability',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const AvailabilityEditorScreen(),
+                  ),
+                ),
                 GoRoute(
-                    path: 'studio',
-                    builder: (context, state) =>
-                        const StudioClosedDaysScreen()),
+                  path: 'studio',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const StudioClosedDaysScreen(),
+                  ),
+                ),
                 GoRoute(
-                    path: 'bookings',
-                    builder: (context, state) => const MyBookingsScreen()),
+                  path: 'bookings',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const MyBookingsScreen(),
+                  ),
+                ),
                 GoRoute(
-                    path: 'sessions',
-                    builder: (context, state) =>
-                        const TrainerSessionsScreen()),
+                  path: 'sessions',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const TrainerSessionsScreen(),
+                  ),
+                ),
               ],
             ),
           ]),

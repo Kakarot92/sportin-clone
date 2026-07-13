@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:sportin_clone/app/kinetic.dart';
+import 'package:sportin_clone/app/kinetic_effects.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/features/booking/application/booking_providers.dart';
@@ -21,57 +22,123 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
-          children: [
-            Eyebrow(l10n.homeWelcome),
-            const SizedBox(height: 10),
-            DisplayTitle(firstName.isEmpty ? 'Zdravo.' : 'Zdravo,\n$firstName.'),
-            const SizedBox(height: 28),
-            _NextTrainingCard(),
-            const SizedBox(height: 32),
-            SectionHeader(l10n.homeShortcuts),
-            const SizedBox(height: 16),
-            _ShortcutTile(
-              icon: Icons.calendar_month,
-              label: l10n.navSchedule,
-              onTap: () => context.go('/schedule'),
+        bottom: false,
+        child: SingleChildScrollView(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Reveal(
+                          index: 0,
+                          child: Eyebrow(l10n.homeWelcome),
+                        ),
+                        const SizedBox(height: 6),
+                        Reveal(
+                          index: 1,
+                          child: DisplayTitle(
+                            firstName.isEmpty
+                                ? 'Zdravo.'
+                                : 'Zdravo,\n$firstName.',
+                            size: 38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Reveal(
+                      index: 2,
+                      child: const _SessionPoster(),
+                    ),
+                  ),
+                  const SizedBox(height: 26),
+                  Reveal(
+                    index: 3,
+                    child: const Marquee(
+                      words: [
+                        'SNAGA',
+                        'KONDICIJA',
+                        'DISCIPLINA',
+                        'FOKUS',
+                        'TEMPO',
+                        'IZDRŽLJIVOST',
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 26),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Reveal(
+                          index: 4,
+                          child: SectionHeader(l10n.homeShortcuts),
+                        ),
+                        const SizedBox(height: 14),
+                        Reveal(
+                          index: 5,
+                          child: _QuickAction(
+                            title: 'ZAKAŽI TERMIN',
+                            sub: 'Izaberi trenera i zakaži trening',
+                            onTap: () => context.go('/schedule'),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Reveal(
+                          index: 6,
+                          child: _QuickAction(
+                            title: 'MERENJA I NAPREDAK',
+                            sub: 'Prati svoja telesna merenja',
+                            onTap: () => context.go('/measurements'),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Reveal(
+                          index: 7,
+                          child: _QuickAction(
+                            title: 'PIŠI TRENERU',
+                            sub: 'Chat poruke sa trenerom',
+                            onTap: () => context.go('/chat'),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
-            _ShortcutTile(
-              icon: Icons.monitor_weight,
-              label: l10n.navMeasurements,
-              onTap: () => context.go('/measurements'),
-            ),
-            const SizedBox(height: 12),
-            _ShortcutTile(
-              icon: Icons.chat_bubble,
-              label: l10n.navChat,
-              onTap: () => context.go('/chat'),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _NextTrainingCard extends ConsumerWidget {
+// ── Next-training poster block ─────────────────────────────────────────────────
+
+class _SessionPoster extends ConsumerWidget {
+  const _SessionPoster();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
     final me = ref.watch(appUserProvider).asData?.value;
-
-    // Watch upcoming bookings when user is available.
     final upcomingAsync = me != null
         ? ref.watch(clientUpcomingBookingsProvider(me.uid))
         : null;
-
     final soonest = upcomingAsync?.asData?.value.isNotEmpty == true
         ? upcomingAsync!.asData!.value.first
         : null;
-
-    // Trainer name for soonest booking.
     final trainerName = soonest != null
         ? ref
             .watch(trainerProvider(soonest.trainerUid))
@@ -80,115 +147,216 @@ class _NextTrainingCard extends ConsumerWidget {
             ?.displayName
         : null;
 
-    String? formattedDate;
+    String weekday = '';
+    String formattedDate = '';
     if (soonest != null) {
       try {
         final dt = DateTime.parse(soonest.date);
+        weekday = DateFormat('EEEE', 'sr').format(dt);
         formattedDate = DateFormat.yMMMEd('sr').format(dt);
       } catch (_) {
+        weekday = soonest.date;
         formattedDate = soonest.date;
       }
     }
 
-    return GestureDetector(
-      onTap: soonest != null ? () => context.push('/profile/bookings') : null,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
+    return Transform.rotate(
+      angle: kTilt * 0.75,
+      child: ClipPath(
+        clipper: const DiagonalClipper(depth: 16),
+        child: Container(
+          width: double.infinity,
           color: kInkElevated,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Theme.of(context).dividerColor),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration:
-                      const BoxDecoration(color: kVolt, shape: BoxShape.circle),
-                ),
-                const SizedBox(width: 10),
-                Eyebrow(l10n.nextTraining),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (soonest != null) ...[
-              Text(
-                formattedDate ?? soonest.date,
-                style: Theme.of(context).textTheme.titleMedium,
+          child: Stack(
+            children: [
+              const Positioned.fill(
+                child: SpeedLines(density: 18, seed: 4, opacity: 0.9),
               ),
-              const SizedBox(height: 4),
-              Text(
-                '${soonest.start}–${soonest.end}',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              if (trainerName != null && trainerName.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  trainerName,
-                  style: Theme.of(context).textTheme.bodyMedium,
+              if (soonest != null)
+                Positioned(
+                  right: -8,
+                  bottom: 2,
+                  child: GhostText(
+                    soonest.start,
+                    size: 88,
+                    color: kLineDark,
+                  ),
                 ),
-              ],
-            ] else ...[
-              Text(l10n.noUpcomingTraining,
-                  style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 16),
-              VoltButton(
-                label: l10n.bookTraining,
-                icon: Icons.add,
-                onPressed: () => context.go('/schedule'),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(22, 28, 22, 30),
+                child: soonest != null
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const PulseDot(size: 8),
+                              const SizedBox(width: 8),
+                              const Eyebrow('SLEDEĆI TRENING'),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              weekday.toUpperCase(),
+                              style: GoogleFonts.archivoBlack(
+                                fontSize: 52,
+                                color: kOffWhite,
+                                height: 0.9,
+                                letterSpacing: -1,
+                              ),
+                            ),
+                          ),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              soonest.start,
+                              style: GoogleFonts.archivoBlack(
+                                fontSize: 52,
+                                color: kVolt,
+                                height: 0.9,
+                                letterSpacing: -1,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Container(height: 1, color: kLineDark),
+                          const SizedBox(height: 12),
+                          Wrap(
+                            spacing: 14,
+                            runSpacing: 6,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              _meta(
+                                Icons.calendar_today_rounded,
+                                formattedDate.toUpperCase(),
+                              ),
+                            ],
+                          ),
+                          if (trainerName != null && trainerName.isNotEmpty) ...[
+                            const SizedBox(height: 10),
+                            Text(
+                              'Trener: $trainerName',
+                              style: GoogleFonts.interTight(
+                                fontSize: 13.5,
+                                color: kMutedDark,
+                              ),
+                            ),
+                          ],
+                        ],
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Eyebrow('SLEDEĆI TRENING'),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Nema zakazanih\ntreninga.',
+                            style: GoogleFonts.archivoBlack(
+                              fontSize: 28,
+                              color: kOffWhite,
+                              height: 0.9,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          VoltButton(
+                            label: 'Zakaži termin',
+                            icon: Icons.bolt_rounded,
+                            onPressed: () => context.go('/schedule'),
+                          ),
+                        ],
+                      ),
               ),
             ],
-          ],
+          ),
         ),
       ),
     );
   }
+
+  Widget _meta(IconData icon, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: kVolt),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: GoogleFonts.interTight(
+            fontSize: 10.5,
+            letterSpacing: 1.4,
+            fontWeight: FontWeight.w700,
+            color: kOffWhite,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-class _ShortcutTile extends StatelessWidget {
-  const _ShortcutTile({
-    required this.icon,
-    required this.label,
+// ── Quick-action row ───────────────────────────────────────────────────────────
+
+class _QuickAction extends StatelessWidget {
+  const _QuickAction({
+    required this.title,
+    required this.sub,
     required this.onTap,
   });
 
-  final IconData icon;
-  final String label;
+  final String title;
+  final String sub;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-        decoration: BoxDecoration(
-          color: kInkElevated,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Theme.of(context).dividerColor),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: kVolt, size: 24),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                label.toUpperCase(),
-                style: GoogleFonts.interTight(
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 1,
-                  fontSize: 15,
+    return Material(
+      color: kInkElevated,
+      shape: const RoundedRectangleBorder(
+        side: BorderSide(color: kLineDark),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.interTight(
+                        fontSize: 11.5,
+                        color: kOffWhite,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      sub,
+                      style: GoogleFonts.interTight(
+                        fontSize: 12.5,
+                        color: kMutedDark,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
-            ),
-            Icon(Icons.chevron_right,
-                color: Theme.of(context).colorScheme.onSurface),
-          ],
+              const SizedBox(width: 12),
+              const Icon(
+                Icons.arrow_outward_rounded,
+                size: 18,
+                color: kVolt,
+              ),
+            ],
+          ),
         ),
       ),
     );
