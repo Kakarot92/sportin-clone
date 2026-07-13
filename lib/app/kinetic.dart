@@ -41,7 +41,7 @@ class DisplayTitle extends StatelessWidget {
   }
 }
 
-/// Volt tick + uppercase label + trailing hairline.
+/// Volt tick (skewed) + uppercase label + trailing hairline.
 class SectionHeader extends StatelessWidget {
   const SectionHeader(this.text, {super.key});
 
@@ -51,7 +51,11 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(width: 14, height: 14, color: kVolt),
+        Transform(
+          transform: Matrix4.skewX(-0.35),
+          alignment: Alignment.center,
+          child: Container(width: 14, height: 14, color: kVolt),
+        ),
         const SizedBox(width: 10),
         Text(
           text.toUpperCase(),
@@ -155,8 +159,11 @@ class KineticField extends StatelessWidget {
   }
 }
 
-/// Full-width volt button with black bold text, optional icon and a soft glow.
-class VoltButton extends StatelessWidget {
+/// Full-width skewed volt button with black bold text, optional icon and a
+/// soft glow. Uses the Kinetik skew technique: Matrix4.skewX(-0.10) on the
+/// container, counter-skew on the label so text stays upright.
+/// Public API is identical to the old VoltButton — all existing callers work.
+class VoltButton extends StatefulWidget {
   const VoltButton({
     super.key,
     required this.label,
@@ -171,38 +178,87 @@ class VoltButton extends StatelessWidget {
   final bool loading;
 
   @override
+  State<VoltButton> createState() => _VoltButtonState();
+}
+
+class _VoltButtonState extends State<VoltButton> {
+  bool _pressed = false;
+
+  bool get _enabled => widget.onPressed != null && !widget.loading;
+
+  @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: onPressed == null
-            ? null
-            : [
-                BoxShadow(
-                  color: kVolt.withValues(alpha: 0.35),
-                  blurRadius: 26,
-                  spreadRadius: -6,
-                ),
-              ],
-      ),
-      child: FilledButton(
-        onPressed: loading ? null : onPressed,
-        child: loading
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: kInk),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, size: 20),
-                    const SizedBox(width: 10),
-                  ],
-                  Text(label.toUpperCase()),
-                ],
+    const skew = -0.10;
+    return Semantics(
+      button: true,
+      label: widget.label,
+      enabled: _enabled,
+      child: GestureDetector(
+        onTapDown: _enabled ? (_) => setState(() => _pressed = true) : null,
+        onTapCancel: _enabled ? () => setState(() => _pressed = false) : null,
+        onTapUp: _enabled
+            ? (_) {
+                setState(() => _pressed = false);
+                widget.onPressed!();
+              }
+            : null,
+        child: AnimatedScale(
+          scale: _pressed ? 0.965 : 1.0,
+          duration: const Duration(milliseconds: 140),
+          curve: Curves.easeOutCubic,
+          child: Transform(
+            transform: Matrix4.skewX(skew),
+            alignment: Alignment.center,
+            child: Container(
+              height: 56,
+              decoration: BoxDecoration(
+                color: _enabled ? kVolt : kVolt.withValues(alpha: 0.4),
+                boxShadow: _enabled
+                    ? [
+                        BoxShadow(
+                          color: kVolt.withValues(
+                              alpha: _pressed ? 0.14 : 0.28),
+                          blurRadius: _pressed ? 10 : 22,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    : null,
               ),
+              child: Transform(
+                transform: Matrix4.skewX(-skew),
+                alignment: Alignment.center,
+                child: Center(
+                  child: widget.loading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: kInk,
+                          ),
+                        )
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (widget.icon != null) ...[
+                              Icon(widget.icon, size: 20, color: kInk),
+                              const SizedBox(width: 10),
+                            ],
+                            Text(
+                              widget.label.toUpperCase(),
+                              style: GoogleFonts.archivoBlack(
+                                fontSize: 14,
+                                color: kInk,
+                                letterSpacing: 1.6,
+                              ),
+                            ),
+                          ],
+                        ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

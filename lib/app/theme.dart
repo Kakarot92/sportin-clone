@@ -144,6 +144,10 @@ ThemeData _kinetik(Brightness brightness) {
   );
 }
 
+/// Decimal number in Serbian notation: 4.9 → "4,9".
+String kDec(double v, {int decimals = 1}) =>
+    v.toStringAsFixed(decimals).replaceAll('.', ',');
+
 TextTheme _textTheme(Color onBg, Color muted) {
   TextStyle display(double size, {double h = 0.9, double ls = -1}) =>
       GoogleFonts.archivoBlack(
