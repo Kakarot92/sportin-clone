@@ -9,6 +9,8 @@ import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/reset_password_screen.dart';
 import '../features/auth/presentation/signup_screen.dart';
 import '../features/auth/presentation/splash_screen.dart';
+import '../features/booking/presentation/my_bookings_screen.dart';
+import '../features/booking/presentation/trainer_sessions_screen.dart';
 import '../features/chat/presentation/chat_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/measurements/presentation/measurements_screen.dart';
@@ -109,6 +111,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'studio',
                     builder: (context, state) =>
                         const StudioClosedDaysScreen()),
+                GoRoute(
+                    path: 'bookings',
+                    builder: (context, state) => const MyBookingsScreen()),
+                GoRoute(
+                    path: 'sessions',
+                    builder: (context, state) =>
+                        const TrainerSessionsScreen()),
               ],
             ),
           ]),

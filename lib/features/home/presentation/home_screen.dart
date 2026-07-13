@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:sportin_clone/app/kinetic.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
+import 'package:sportin_clone/features/booking/application/booking_providers.dart';
+import 'package:sportin_clone/features/trainers/application/trainers_providers.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -53,42 +56,94 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _NextTrainingCard extends StatelessWidget {
+class _NextTrainingCard extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: kInkElevated,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Theme.of(context).dividerColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 10,
-                height: 10,
-                decoration:
-                    const BoxDecoration(color: kVolt, shape: BoxShape.circle),
+    final me = ref.watch(appUserProvider).asData?.value;
+
+    // Watch upcoming bookings when user is available.
+    final upcomingAsync = me != null
+        ? ref.watch(clientUpcomingBookingsProvider(me.uid))
+        : null;
+
+    final soonest = upcomingAsync?.asData?.value.isNotEmpty == true
+        ? upcomingAsync!.asData!.value.first
+        : null;
+
+    // Trainer name for soonest booking.
+    final trainerName = soonest != null
+        ? ref
+            .watch(trainerProvider(soonest.trainerUid))
+            .asData
+            ?.value
+            ?.displayName
+        : null;
+
+    String? formattedDate;
+    if (soonest != null) {
+      try {
+        final dt = DateTime.parse(soonest.date);
+        formattedDate = DateFormat.yMMMEd('sr').format(dt);
+      } catch (_) {
+        formattedDate = soonest.date;
+      }
+    }
+
+    return GestureDetector(
+      onTap: soonest != null ? () => context.push('/profile/bookings') : null,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: kInkElevated,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Theme.of(context).dividerColor),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration:
+                      const BoxDecoration(color: kVolt, shape: BoxShape.circle),
+                ),
+                const SizedBox(width: 10),
+                Eyebrow(l10n.nextTraining),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (soonest != null) ...[
+              Text(
+                formattedDate ?? soonest.date,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(width: 10),
-              Eyebrow(l10n.nextTraining),
+              const SizedBox(height: 4),
+              Text(
+                '${soonest.start}–${soonest.end}',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              if (trainerName != null && trainerName.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  trainerName,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ] else ...[
+              Text(l10n.noUpcomingTraining,
+                  style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 16),
+              VoltButton(
+                label: l10n.bookTraining,
+                icon: Icons.add,
+                onPressed: () => context.go('/schedule'),
+              ),
             ],
-          ),
-          const SizedBox(height: 16),
-          Text(l10n.noUpcomingTraining,
-              style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 16),
-          VoltButton(
-            label: l10n.bookTraining,
-            icon: Icons.add,
-            onPressed: () => context.go('/schedule'),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

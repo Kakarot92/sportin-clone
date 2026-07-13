@@ -73,6 +73,17 @@ class ProfileScreen extends ConsumerWidget {
                   icon: const Icon(Icons.store_outlined),
                   label: Text(l10n.studioClosedDays),
                 ),
+              OutlinedButton.icon(
+                onPressed: () => context.push('/profile/bookings'),
+                icon: const Icon(Icons.event_outlined),
+                label: Text(l10n.myBookings),
+              ),
+              if (user.isTrainer)
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/profile/sessions'),
+                  icon: const Icon(Icons.people_outline),
+                  label: Text(l10n.mySessions),
+                ),
             ],
             const SizedBox(height: 28),
             SectionHeader(l10n.settingsAppearance),
