@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../scheduling/domain/booking.dart';
 import '../../scheduling/domain/date_utils.dart';
 import '../domain/booking_exceptions.dart';
+import '../domain/booking_policy.dart';
 
 /// Firestore-backed repository for booking creation and querying.
 ///
@@ -126,5 +127,77 @@ class BookingRepository {
         .snapshots()
         .map((snap) =>
             snap.docs.map((d) => Booking.fromMap(d.id, d.data())).toList());
+  }
+
+  // ─── Cancellation & reschedule (AS-035, AS-036, AS-038, AS-039, AS-040) ──
+
+  /// Cancels [booking] by setting its status to `'cancelled'`.
+  ///
+  /// Throws [CutoffPassedException] if the session starts within
+  /// [kCancellationCutoffHours] hours from now (AS-036).
+  ///
+  /// Setting status to `'cancelled'` automatically frees the slot because
+  /// [AvailabilityRepository.watchBookingsForDay] filters on
+  /// `status == 'booked'` (AS-038).
+  Future<void> cancelBooking(Booking booking) async {
+    final slotStart = bookingSlotStart(booking.date, booking.start);
+    if (isPastCutoff(slotStart, DateTime.now())) {
+      throw const CutoffPassedException();
+    }
+    await _db
+        .collection('bookings')
+        .doc(booking.id)
+        .update({'status': 'cancelled'});
+  }
+
+  /// Atomically cancels [oldBooking] and books the new slot described by
+  /// [newTrainerUid] / [newDate] / [newStart] / [newEnd] (AS-039).
+  ///
+  /// Throws:
+  /// - [CutoffPassedException] if the OLD slot's cutoff has passed.
+  /// - [PastSlotException] if the NEW slot is in the past.
+  /// - [SlotTakenException] if the NEW slot is already booked.
+  Future<void> rescheduleBooking({
+    required Booking oldBooking,
+    required String newTrainerUid,
+    required DateTime newDate,
+    required String newStart,
+    required String newEnd,
+  }) async {
+    // 1. Cutoff check on OLD booking.
+    final oldSlotStart = bookingSlotStart(oldBooking.date, oldBooking.start);
+    if (isPastCutoff(oldSlotStart, DateTime.now())) {
+      throw const CutoffPassedException();
+    }
+
+    // 2. Past-slot guard on NEW slot.
+    final newSlotStart = bookingSlotStart(ymd(newDate), newStart);
+    if (isPastSlot(newSlotStart, DateTime.now())) {
+      throw const PastSlotException();
+    }
+
+    // 3. Single atomic transaction: cancel old + book new.
+    final oldRef = _db.collection('bookings').doc(oldBooking.id);
+    final newDocId =
+        Booking.bookingDocId(newTrainerUid, ymd(newDate), newStart);
+    final newRef = _db.collection('bookings').doc(newDocId);
+
+    await _db.runTransaction((tx) async {
+      final newSnap = await tx.get(newRef);
+      if (newSnap.exists &&
+          (newSnap.data()!['status'] as String?) == 'booked') {
+        throw const SlotTakenException();
+      }
+      tx.update(oldRef, {'status': 'cancelled'});
+      tx.set(newRef, {
+        'trainerUid': newTrainerUid,
+        'clientUid': oldBooking.clientUid,
+        'date': ymd(newDate),
+        'start': newStart,
+        'end': newEnd,
+        'status': 'booked',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    });
   }
 }

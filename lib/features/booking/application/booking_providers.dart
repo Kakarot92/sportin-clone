@@ -81,6 +81,39 @@ class BookingController extends AsyncNotifier<void> {
     );
     return !state.hasError;
   }
+
+  /// Cancels [booking].
+  ///
+  /// Returns `true` on success, `false` on error (e.g. cutoff passed).
+  /// See [BookingRepository.cancelBooking] for exception details (AS-035,
+  /// AS-036, AS-038, AS-040).
+  Future<bool> cancel(Booking booking) async {
+    final repo = ref.read(bookingRepositoryProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() => repo.cancelBooking(booking));
+    return !state.hasError;
+  }
+
+  /// Reschedules [oldBooking] to [newSlot] atomically (AS-039).
+  ///
+  /// Returns `true` on success, `false` on error.
+  Future<bool> reschedule({
+    required Booking oldBooking,
+    required Slot newSlot,
+  }) async {
+    final repo = ref.read(bookingRepositoryProvider);
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => repo.rescheduleBooking(
+        oldBooking: oldBooking,
+        newTrainerUid: newSlot.trainerUid,
+        newDate: newSlot.date,
+        newStart: newSlot.start,
+        newEnd: newSlot.end,
+      ),
+    );
+    return !state.hasError;
+  }
 }
 
 /// Provider for [BookingController].

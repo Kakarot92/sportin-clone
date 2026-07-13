@@ -8,6 +8,18 @@ class SlotTakenException implements Exception {
   const SlotTakenException();
 }
 
+/// Thrown when the user attempts to cancel or reschedule a booking after the
+/// cancellation cutoff has passed (AS-036).
+class CutoffPassedException implements Exception {
+  const CutoffPassedException();
+}
+
+/// Thrown defensively when a cancel/reschedule target document does not match
+/// expectations (e.g. not found or belongs to a different user).
+class BookingNotFoundOrForbiddenException implements Exception {
+  const BookingNotFoundOrForbiddenException();
+}
+
 /// Returns `true` if [slotStart] is strictly before [now].
 ///
 /// Extracted as a pure function so it can be unit-tested without Firebase.

@@ -125,5 +125,41 @@
   "noBookingHistory": "Nema istorije.",
   "noSessions": "Nema zakazanih sesija.",
   "statusBooked": "Rezervisano",
-  "statusCancelled": "Otkazano"
+  "statusCancelled": "Otkazano",
+  "cancelBooking": "Otkaži termin",
+  "cancelConfirmTitle": "Otkazivanje termina",
+  "cancelConfirmBody": "Da li si siguran da želiš da otkažeš termin {time}?",
+  "@cancelConfirmBody": {
+    "description": "Tekst dijaloga za potvrdu otkazivanja",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "cutoffPassedError": "Otkazivanje/pomeranje je moguće najkasnije {hours}h pre termina.",
+  "@cutoffPassedError": {
+    "description": "Greška kada je rok za otkazivanje prošao",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "reschedule": "Pomeri termin",
+  "rescheduleConfirmTitle": "Pomeranje termina",
+  "rescheduleConfirmBody": "Pomeri termin na {time} sa {trainer}?",
+  "@rescheduleConfirmBody": {
+    "description": "Tekst dijaloga za potvrdu pomeranja termina",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "trainer": {
+        "type": "String"
+      }
+    }
+  },
+  "rescheduled": "Termin je pomeren.",
+  "cancelSuccess": "Termin je otkazan."
 }

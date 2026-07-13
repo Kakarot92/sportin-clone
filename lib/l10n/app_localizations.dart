@@ -787,6 +787,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancelled'**
   String get statusCancelled;
+
+  /// No description provided for @cancelBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel session'**
+  String get cancelBooking;
+
+  /// No description provided for @cancelConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel session'**
+  String get cancelConfirmTitle;
+
+  /// Cancel booking confirmation dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel the {time} session?'**
+  String cancelConfirmBody(String time);
+
+  /// Error shown when the cancellation cutoff has already passed
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation/rescheduling is only possible up to {hours}h before the session.'**
+  String cutoffPassedError(int hours);
+
+  /// No description provided for @reschedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule'**
+  String get reschedule;
+
+  /// No description provided for @rescheduleConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reschedule session'**
+  String get rescheduleConfirmTitle;
+
+  /// Reschedule confirmation dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'Move session to {time} with {trainer}?'**
+  String rescheduleConfirmBody(String time, String trainer);
+
+  /// No description provided for @rescheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Session moved.'**
+  String get rescheduled;
+
+  /// No description provided for @cancelSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Session cancelled.'**
+  String get cancelSuccess;
 }
 
 class _AppLocalizationsDelegate

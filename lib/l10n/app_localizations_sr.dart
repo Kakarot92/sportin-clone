@@ -361,4 +361,37 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get statusCancelled => 'Otkazano';
+
+  @override
+  String get cancelBooking => 'Otkaži termin';
+
+  @override
+  String get cancelConfirmTitle => 'Otkazivanje termina';
+
+  @override
+  String cancelConfirmBody(String time) {
+    return 'Da li si siguran da želiš da otkažeš termin $time?';
+  }
+
+  @override
+  String cutoffPassedError(int hours) {
+    return 'Otkazivanje/pomeranje je moguće najkasnije ${hours}h pre termina.';
+  }
+
+  @override
+  String get reschedule => 'Pomeri termin';
+
+  @override
+  String get rescheduleConfirmTitle => 'Pomeranje termina';
+
+  @override
+  String rescheduleConfirmBody(String time, String trainer) {
+    return 'Pomeri termin na $time sa $trainer?';
+  }
+
+  @override
+  String get rescheduled => 'Termin je pomeren.';
+
+  @override
+  String get cancelSuccess => 'Termin je otkazan.';
 }

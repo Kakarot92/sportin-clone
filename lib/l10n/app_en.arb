@@ -125,5 +125,41 @@
   "noBookingHistory": "No booking history.",
   "noSessions": "No sessions scheduled.",
   "statusBooked": "Booked",
-  "statusCancelled": "Cancelled"
+  "statusCancelled": "Cancelled",
+  "cancelBooking": "Cancel session",
+  "cancelConfirmTitle": "Cancel session",
+  "cancelConfirmBody": "Are you sure you want to cancel the {time} session?",
+  "@cancelConfirmBody": {
+    "description": "Cancel booking confirmation dialog body",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "cutoffPassedError": "Cancellation/rescheduling is only possible up to {hours}h before the session.",
+  "@cutoffPassedError": {
+    "description": "Error shown when the cancellation cutoff has already passed",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "reschedule": "Reschedule",
+  "rescheduleConfirmTitle": "Reschedule session",
+  "rescheduleConfirmBody": "Move session to {time} with {trainer}?",
+  "@rescheduleConfirmBody": {
+    "description": "Reschedule confirmation dialog body",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "trainer": {
+        "type": "String"
+      }
+    }
+  },
+  "rescheduled": "Session moved.",
+  "cancelSuccess": "Session cancelled."
 }

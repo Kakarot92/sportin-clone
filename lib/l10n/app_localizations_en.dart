@@ -362,4 +362,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusCancelled => 'Cancelled';
+
+  @override
+  String get cancelBooking => 'Cancel session';
+
+  @override
+  String get cancelConfirmTitle => 'Cancel session';
+
+  @override
+  String cancelConfirmBody(String time) {
+    return 'Are you sure you want to cancel the $time session?';
+  }
+
+  @override
+  String cutoffPassedError(int hours) {
+    return 'Cancellation/rescheduling is only possible up to ${hours}h before the session.';
+  }
+
+  @override
+  String get reschedule => 'Reschedule';
+
+  @override
+  String get rescheduleConfirmTitle => 'Reschedule session';
+
+  @override
+  String rescheduleConfirmBody(String time, String trainer) {
+    return 'Move session to $time with $trainer?';
+  }
+
+  @override
+  String get rescheduled => 'Session moved.';
+
+  @override
+  String get cancelSuccess => 'Session cancelled.';
 }
