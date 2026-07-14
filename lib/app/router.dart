@@ -21,6 +21,8 @@ import '../features/packages/presentation/my_package_screen.dart';
 import '../features/packages/presentation/package_types_screen.dart';
 import '../features/scheduling/domain/booking.dart';
 import '../features/scheduling/presentation/trainer_slots_screen.dart';
+import '../features/group_classes/presentation/group_classes_screen.dart';
+import '../features/group_classes/presentation/trainer_group_classes_screen.dart';
 import '../features/trainers/presentation/trainer_directory_screen.dart';
 import '../features/trainers/presentation/trainer_edit_screen.dart';
 import '../features/trainers/presentation/trainer_profile_screen.dart';
@@ -99,6 +101,13 @@ final routerProvider = Provider<GoRouter>((ref) {
               path: '/schedule',
               builder: (context, state) => const TrainerDirectoryScreen(),
               routes: [
+                GoRoute(
+                  path: 'group-classes',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const GroupClassesScreen(),
+                  ),
+                ),
                 GoRoute(
                   path: 'trainer/:uid',
                   pageBuilder: (context, state) => _kineticPage(
@@ -188,6 +197,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                   pageBuilder: (context, state) => _kineticPage(
                     state.pageKey,
                     const PackageTypesScreen(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'group-classes',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const TrainerGroupClassesScreen(),
                   ),
                 ),
               ],

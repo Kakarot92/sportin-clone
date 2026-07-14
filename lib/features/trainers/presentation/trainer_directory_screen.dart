@@ -46,6 +46,19 @@ class TrainerDirectoryScreen extends ConsumerWidget {
                             index: 1,
                             child: DisplayTitle(l10n.chooseTrainer, size: 38),
                           ),
+                          const SizedBox(height: 12),
+                          Reveal(
+                            index: 2,
+                            child: OutlinedButton.icon(
+                              onPressed: () =>
+                                  context.push('/schedule/group-classes'),
+                              icon: const Icon(
+                                Icons.groups_outlined,
+                                color: kVolt,
+                              ),
+                              label: Text(l10n.groupClasses),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -72,7 +85,7 @@ class TrainerDirectoryScreen extends ConsumerWidget {
                             separatorBuilder: (_, _) =>
                                 const SizedBox(height: 8),
                             itemBuilder: (context, i) => Reveal(
-                              index: 2 + i,
+                              index: 3 + i,
                               child: _TrainerCard(
                                 trainer: trainers[i],
                               ),

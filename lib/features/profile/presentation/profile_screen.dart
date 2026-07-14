@@ -149,6 +149,17 @@ class ProfileScreen extends ConsumerWidget {
                     label: Text(l10n.mySessions),
                   ),
                 ),
+
+              // Trainer-only group classes management.
+              if (user.isTrainer)
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/group-classes'),
+                    icon: const Icon(Icons.groups_outlined),
+                    label: Text(l10n.myGroupClasses),
+                  ),
+                ),
             ],
 
             // ── Appearance settings ───────────────────────────────────────
