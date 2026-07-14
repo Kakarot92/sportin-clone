@@ -141,6 +141,95 @@ ThemeData _kinetik(Brightness brightness) {
       trackColor: WidgetStateProperty.resolveWith((s) =>
           s.contains(WidgetState.selected) ? kVolt : null),
     ),
+    // ── Kinetik global dialog / picker / chip / dropdown theming ─────────
+    canvasColor: surface, // darkens DropdownButton popup (uses canvasColor)
+    dialogTheme: DialogThemeData(
+      backgroundColor: surface,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(2),
+        side: BorderSide(color: line),
+      ),
+      titleTextStyle: GoogleFonts.archivoBlack(
+          fontSize: 20, color: onBg, letterSpacing: -0.5),
+      contentTextStyle: GoogleFonts.interTight(
+          fontSize: 14, color: muted, height: 1.4),
+    ),
+    datePickerTheme: DatePickerThemeData(
+      backgroundColor: surface,
+      headerBackgroundColor: kVolt,
+      headerForegroundColor: kInk,
+      headerHeadlineStyle:
+          GoogleFonts.archivoBlack(fontSize: 28, color: kInk),
+      weekdayStyle: GoogleFonts.interTight(
+          fontWeight: FontWeight.w700, color: muted, fontSize: 12),
+      dayForegroundColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? kInk : onBg),
+      dayBackgroundColor: WidgetStateProperty.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? kVolt : null),
+      todayForegroundColor: WidgetStateProperty.all(kVolt),
+      todayBorder: const BorderSide(color: kVolt, width: 1.5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(2),
+        side: BorderSide(color: line),
+      ),
+      dividerColor: line,
+      surfaceTintColor: Colors.transparent,
+    ),
+    timePickerTheme: TimePickerThemeData(
+      backgroundColor: surface,
+      hourMinuteColor: field,
+      hourMinuteTextColor: onBg,
+      dayPeriodColor: field,
+      dayPeriodTextColor: onBg,
+      dialBackgroundColor: field,
+      dialHandColor: kVolt,
+      entryModeIconColor: kVolt,
+      helpTextStyle: GoogleFonts.interTight(
+          fontWeight: FontWeight.w700,
+          color: muted,
+          fontSize: 12,
+          letterSpacing: 1.2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(2),
+        side: BorderSide(color: line),
+      ),
+    ),
+    segmentedButtonTheme: SegmentedButtonThemeData(
+      style: SegmentedButton.styleFrom(
+        backgroundColor: field,
+        foregroundColor: muted,
+        selectedBackgroundColor: kVolt,
+        selectedForegroundColor: kInk,
+        side: BorderSide(color: line),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+        textStyle: GoogleFonts.interTight(
+            fontWeight: FontWeight.w800,
+            fontSize: 12,
+            letterSpacing: 1),
+      ),
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: field,
+      selectedColor: kVolt,
+      disabledColor: field,
+      labelStyle: GoogleFonts.interTight(
+          fontWeight: FontWeight.w700, color: onBg, fontSize: 12),
+      secondaryLabelStyle: GoogleFonts.interTight(
+          fontWeight: FontWeight.w800, color: kInk, fontSize: 12),
+      side: BorderSide(color: line),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+      checkmarkColor: kInk,
+    ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: surface,
+      textStyle: GoogleFonts.interTight(color: onBg, fontSize: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(2),
+        side: BorderSide(color: line),
+      ),
+    ),
   );
 }
 
