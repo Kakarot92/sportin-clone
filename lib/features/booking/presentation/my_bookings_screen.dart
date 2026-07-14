@@ -273,7 +273,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
     String formattedDate = dateStr;
     try {
       final dt = DateTime.parse(dateStr);
-      formattedDate = DateFormat.yMMMEd('sr').format(dt);
+      formattedDate = DateFormat.yMMMEd('sr_Latn').format(dt);
     } catch (_) {
       // fall back to raw string
     }
@@ -292,6 +292,12 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
     // within the cancellation cutoff window (AS-035, AS-036).
     final canCancel =
         widget.isUpcoming && !isCancelled && canCancelBooking(widget.booking);
+
+    // When the session is upcoming and not cancelled but the cutoff window has
+    // already passed, show a small muted note instead of silently hiding the
+    // action row — so the user knows why nothing appears (Bug-2 fix).
+    final showCutoffNote =
+        widget.isUpcoming && !isCancelled && !canCancelBooking(widget.booking);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
@@ -353,6 +359,31 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                   label: l10n.cancelBooking,
                   color: kDanger,
                   onPressed: _cancel,
+                ),
+              ],
+            ),
+          ],
+
+          // ── Cutoff-locked note (Bug-2 fix) ──
+          // When the session is upcoming and not cancelled but the 12-hour
+          // cancellation window has already passed, show a muted caption so
+          // the user knows why the action row is absent.
+          if (showCutoffNote) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(
+                  Icons.lock_clock_outlined,
+                  color: kMutedDark,
+                  size: 14,
+                ),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    l10n.cutoffPassedError(kCancellationCutoffHours),
+                    style: theme.textTheme.bodySmall
+                        ?.copyWith(color: kMutedDark),
+                  ),
                 ),
               ],
             ),

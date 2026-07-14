@@ -152,8 +152,8 @@ class _SessionPoster extends ConsumerWidget {
     if (soonest != null) {
       try {
         final dt = DateTime.parse(soonest.date);
-        weekday = DateFormat('EEEE', 'sr').format(dt);
-        formattedDate = DateFormat.yMMMEd('sr').format(dt);
+        weekday = DateFormat('EEEE', 'sr_Latn').format(dt);
+        formattedDate = DateFormat.yMMMEd('sr_Latn').format(dt);
       } catch (_) {
         weekday = soonest.date;
         formattedDate = soonest.date;

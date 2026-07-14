@@ -456,7 +456,7 @@ class _ExceptionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final dateLabel = DateFormat.yMMMEd('sr').format(exception.date);
+    final dateLabel = DateFormat.yMMMEd('sr_Latn').format(exception.date);
     final timeLabel = exception.allDay
         ? l10n.blockWholeDay
         : '${exception.start ?? ''} – ${exception.end ?? ''}';
@@ -531,7 +531,7 @@ class _ExceptionDialogState extends State<_ExceptionDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final dateLabel = DateFormat.yMMMEd('sr').format(widget.date);
+    final dateLabel = DateFormat.yMMMEd('sr_Latn').format(widget.date);
 
     return AlertDialog(
       title: Text(l10n.addException),
