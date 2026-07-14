@@ -806,11 +806,11 @@ abstract class AppLocalizations {
   /// **'Are you sure you want to cancel the {time} session?'**
   String cancelConfirmBody(String time);
 
-  /// Error shown when the cancellation cutoff has already passed
+  /// Error shown when the session has already started or is in the past
   ///
   /// In en, this message translates to:
-  /// **'Cancellation/rescheduling is only possible up to {hours}h before the session.'**
-  String cutoffPassedError(int hours);
+  /// **'This session has already started or passed — cancellation/rescheduling is no longer possible.'**
+  String get cutoffPassedError;
 
   /// No description provided for @reschedule.
   ///

@@ -133,8 +133,8 @@ class BookingRepository {
 
   /// Cancels [booking] by setting its status to `'cancelled'`.
   ///
-  /// Throws [CutoffPassedException] if the session starts within
-  /// [kCancellationCutoffHours] hours from now (AS-036).
+  /// Throws [CutoffPassedException] if the session has already started or
+  /// is in the past (`kCancellationCutoffHours = 0`; AS-036).
   ///
   /// Setting status to `'cancelled'` automatically frees the slot because
   /// [AvailabilityRepository.watchBookingsForDay] filters on

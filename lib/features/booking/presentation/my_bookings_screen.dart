@@ -249,7 +249,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
     } else {
       final err = ref.read(bookingControllerProvider).error;
       final msg = err is CutoffPassedException
-          ? l10n.cutoffPassedError(kCancellationCutoffHours)
+          ? l10n.cutoffPassedError
           : l10n.errorGeneric;
       messenger.showSnackBar(SnackBar(content: Text(msg)));
     }
@@ -289,12 +289,12 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
     final badgeLabel = isCancelled ? l10n.statusCancelled : l10n.statusBooked;
 
     // Show action buttons only when the session is upcoming, booked, and
-    // within the cancellation cutoff window (AS-035, AS-036).
+    // has not yet started (AS-035, AS-036).
     final canCancel =
         widget.isUpcoming && !isCancelled && canCancelBooking(widget.booking);
 
-    // When the session is upcoming and not cancelled but the cutoff window has
-    // already passed, show a small muted note instead of silently hiding the
+    // When the session is upcoming and not cancelled but has already started
+    // or passed, show a small muted note instead of silently hiding the
     // action row — so the user knows why nothing appears (Bug-2 fix).
     final showCutoffNote =
         widget.isUpcoming && !isCancelled && !canCancelBooking(widget.booking);
@@ -365,9 +365,9 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
           ],
 
           // ── Cutoff-locked note (Bug-2 fix) ──
-          // When the session is upcoming and not cancelled but the 12-hour
-          // cancellation window has already passed, show a muted caption so
-          // the user knows why the action row is absent.
+          // When the session is upcoming but already started or in the past
+          // and not cancelled, show a muted caption so the user knows why
+          // the action row is absent.
           if (showCutoffNote) ...[
             const SizedBox(height: 8),
             Row(
@@ -380,7 +380,7 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
-                    l10n.cutoffPassedError(kCancellationCutoffHours),
+                    l10n.cutoffPassedError,
                     style: theme.textTheme.bodySmall
                         ?.copyWith(color: kMutedDark),
                   ),

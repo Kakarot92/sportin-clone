@@ -137,14 +137,9 @@
       }
     }
   },
-  "cutoffPassedError": "Otkazivanje/pomeranje je moguće najkasnije {hours}h pre termina.",
+  "cutoffPassedError": "Ovaj termin je već počeo ili prošao — otkazivanje/pomeranje više nije moguće.",
   "@cutoffPassedError": {
-    "description": "Greška kada je rok za otkazivanje prošao",
-    "placeholders": {
-      "hours": {
-        "type": "int"
-      }
-    }
+    "description": "Greška kada je termin već počeo ili prošao"
   },
   "reschedule": "Pomeri termin",
   "rescheduleConfirmTitle": "Pomeranje termina",

@@ -7,7 +7,6 @@ import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/features/booking/application/booking_providers.dart';
 import 'package:sportin_clone/features/booking/domain/booking_exceptions.dart';
-import 'package:sportin_clone/features/booking/domain/booking_policy.dart';
 import 'package:sportin_clone/features/scheduling/application/scheduling_providers.dart';
 import 'package:sportin_clone/features/scheduling/domain/booking.dart';
 import 'package:sportin_clone/features/scheduling/domain/slot.dart';
@@ -169,7 +168,7 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
           : err is PastSlotException
               ? l10n.pastSlotError
               : err is CutoffPassedException
-                  ? l10n.cutoffPassedError(kCancellationCutoffHours)
+                  ? l10n.cutoffPassedError
                   : l10n.errorGeneric;
       messenger.showSnackBar(SnackBar(content: Text(msg)));
     }

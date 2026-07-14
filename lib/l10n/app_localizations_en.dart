@@ -375,9 +375,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String cutoffPassedError(int hours) {
-    return 'Cancellation/rescheduling is only possible up to ${hours}h before the session.';
-  }
+  String get cutoffPassedError =>
+      'This session has already started or passed — cancellation/rescheduling is no longer possible.';
 
   @override
   String get reschedule => 'Reschedule';

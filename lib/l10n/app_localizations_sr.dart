@@ -374,9 +374,8 @@ class AppLocalizationsSr extends AppLocalizations {
   }
 
   @override
-  String cutoffPassedError(int hours) {
-    return 'Otkazivanje/pomeranje je moguće najkasnije ${hours}h pre termina.';
-  }
+  String get cutoffPassedError =>
+      'Ovaj termin je već počeo ili prošao — otkazivanje/pomeranje više nije moguće.';
 
   @override
   String get reschedule => 'Pomeri termin';

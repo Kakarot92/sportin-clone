@@ -56,7 +56,8 @@ const _fakeTrainerProfile = TrainerProfile(
   displayName: 'Trainer Name',
 );
 
-/// A booking far in the future — well within the 12-hour cancellation cutoff.
+/// A booking far in the future — session has not yet started, so it is
+/// cancellable/reschedulable under the 0-hour cutoff policy.
 final _cancellableBooking = Booking(
   id: 'b-cancel',
   trainerUid: 'trainer-1',
@@ -67,8 +68,9 @@ final _cancellableBooking = Booking(
   status: 'booked',
 );
 
-/// A booking in the distant past — cutoff is definitely passed.
-/// Injected via the upcoming override to test that the button is hidden.
+/// A booking in the distant past — session has already started/passed,
+/// so cancellation is blocked. Injected via the upcoming override to
+/// test that the button is hidden.
 final _pastCutoffBooking = Booking(
   id: 'b-past',
   trainerUid: 'trainer-1',
@@ -291,9 +293,10 @@ void main() {
         // still visible (AS-036).
         await tester.pumpAndSettle();
 
-        // Cutoff-specific error shown — must mention hours (AS-036).
+        // Cutoff-specific error shown — must mention the session has
+        // already started (AS-036, new 0-hour policy message).
         expect(
-          find.textContaining('12h'),
+          find.textContaining('already started'),
           findsOneWidget,
           reason: 'Tree texts: ${tester.widgetList<Text>(find.byType(Text)).map((t) => t.data ?? t.textSpan?.toPlainText() ?? "<null>").join(" | ")}',
         );

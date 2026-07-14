@@ -145,7 +145,7 @@ class _SessionCardState extends ConsumerState<_SessionCard> {
     } else {
       final err = ref.read(bookingControllerProvider).error;
       final msg = err is CutoffPassedException
-          ? l10n.cutoffPassedError(kCancellationCutoffHours)
+          ? l10n.cutoffPassedError
           : l10n.errorGeneric;
       messenger.showSnackBar(SnackBar(content: Text(msg)));
     }
@@ -271,7 +271,7 @@ class _SessionCardState extends ConsumerState<_SessionCard> {
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(
-                    l10n.cutoffPassedError(kCancellationCutoffHours),
+                    l10n.cutoffPassedError,
                     style: theme.textTheme.bodySmall
                         ?.copyWith(color: kMutedDark),
                   ),

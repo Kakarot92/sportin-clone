@@ -137,14 +137,9 @@
       }
     }
   },
-  "cutoffPassedError": "Cancellation/rescheduling is only possible up to {hours}h before the session.",
+  "cutoffPassedError": "This session has already started or passed — cancellation/rescheduling is no longer possible.",
   "@cutoffPassedError": {
-    "description": "Error shown when the cancellation cutoff has already passed",
-    "placeholders": {
-      "hours": {
-        "type": "int"
-      }
-    }
+    "description": "Error shown when the session has already started or is in the past"
   },
   "reschedule": "Reschedule",
   "rescheduleConfirmTitle": "Reschedule session",

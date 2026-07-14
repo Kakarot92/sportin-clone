@@ -4,45 +4,59 @@ import 'package:sportin_clone/features/scheduling/domain/booking.dart';
 
 void main() {
   // ── AS-035 / AS-036: cancellation cutoff policy ───────────────────────────
+  //
+  // Policy (kCancellationCutoffHours = 0): cancellation and rescheduling are
+  // allowed at any time before the session starts. The only block is when the
+  // session has already started or is in the past.
 
   group('isPastCutoff', () {
     test(
-      'AS-036: isPastCutoff returns false when slot is 20h away (well within '
-      'the 12h cutoff — cancellation allowed)',
+      'AS-036: isPastCutoff returns false when slot is several hours in the '
+      'future — cancellation is still allowed',
       () {
         final now = DateTime(2026, 7, 20, 8, 0);
-        final slotStart = now.add(const Duration(hours: 20));
+        final slotStart = now.add(const Duration(hours: 5));
         expect(isPastCutoff(slotStart, now), isFalse);
       },
     );
 
     test(
-      'AS-036: isPastCutoff returns true when slot is only 5h away (past the '
-      '12h cutoff — cancellation NOT allowed)',
+      'AS-036: isPastCutoff returns false when slot is only minutes away — '
+      'cancellation is still allowed right up to the start',
       () {
         final now = DateTime(2026, 7, 20, 8, 0);
-        final slotStart = now.add(const Duration(hours: 5));
+        final slotStart = now.add(const Duration(minutes: 3));
+        expect(isPastCutoff(slotStart, now), isFalse);
+      },
+    );
+
+    test(
+      'AS-036: isPastCutoff returns true when slot is in the past — '
+      'session has already started, cancellation blocked',
+      () {
+        final now = DateTime(2026, 7, 20, 8, 0);
+        final slotStart = now.subtract(const Duration(minutes: 30));
         expect(isPastCutoff(slotStart, now), isTrue);
       },
     );
 
     test(
-      'AS-036: isPastCutoff boundary — exactly 12h before slot start returns '
-      'false (exclusive boundary: user CAN still cancel at the cutoff moment)',
+      'AS-036: isPastCutoff boundary — slot starting exactly at now returns '
+      'false (exclusive: user CAN still cancel at the exact start moment)',
       () {
         final now = DateTime(2026, 7, 20, 8, 0);
-        // slotStart is exactly 12h after now, so cutoffMoment == now.
-        final slotStart = now.add(const Duration(hours: 12));
-        // now.isAfter(cutoffMoment) == now.isAfter(now) == false
+        // With cutoffHours = 0: cutoffMoment = slotStart.subtract(0h) = slotStart
+        // now.isAfter(slotStart) == now.isAfter(now) == false
+        final slotStart = now;
         expect(isPastCutoff(slotStart, now), isFalse);
       },
     );
 
     test(
-      'AS-036: isPastCutoff returns true when 1 minute past the cutoff moment',
+      'AS-036: isPastCutoff returns true when slot started 1 minute ago',
       () {
-        final now = DateTime(2026, 7, 20, 8, 1); // 1 min past the cutoff
-        final slotStart = DateTime(2026, 7, 20, 20, 0); // 11h59m away
+        final slotStart = DateTime(2026, 7, 20, 8, 0); // session started at 08:00
+        final now = DateTime(2026, 7, 20, 8, 1); // it is now 08:01 — 1 min late
         expect(isPastCutoff(slotStart, now), isTrue);
       },
     );
@@ -52,7 +66,7 @@ void main() {
       () {
         final now = DateTime(2026, 7, 20, 8, 0);
         final slotStart = now.add(const Duration(hours: 3));
-        // With a 2h cutoff, 3h away should be fine.
+        // With a 2h cutoff, 3h away should still be allowed.
         expect(isPastCutoff(slotStart, now, cutoffHours: 2), isFalse);
         // With a 4h cutoff, 3h away is past the cutoff.
         expect(isPastCutoff(slotStart, now, cutoffHours: 4), isTrue);
@@ -103,8 +117,8 @@ void main() {
         );
 
     test(
-      'AS-035: canCancelBooking returns true when slot is 20h away '
-      '(returns the negation of isPastCutoff)',
+      'AS-035: canCancelBooking returns true when slot is several hours in '
+      'the future — session has not yet started',
       () {
         final now = DateTime(2026, 7, 20, 8, 0);
         final slotStart = now.add(const Duration(hours: 20));
@@ -120,23 +134,35 @@ void main() {
     );
 
     test(
-      'AS-036: canCancelBooking returns false when slot is 5h away (past '
-      'cutoff — negation of isPastCutoff)',
+      'AS-036: canCancelBooking returns false when slot is in the past — '
+      'session has already started, cancellation blocked',
       () {
         final now = DateTime(2026, 7, 20, 8, 0);
-        // Slot is at 13:00 on the same day — only 5h away.
-        final booking = makeBooking('2026-07-20', '13:00');
+        // Slot started 30 minutes ago.
+        final booking = makeBooking('2026-07-20', '07:30');
         expect(canCancelBooking(booking, now: now), isFalse);
       },
     );
 
     test(
-      'AS-036: canCancelBooking returns true at exactly the cutoff boundary '
-      '(exclusive boundary consistent with isPastCutoff)',
+      'AS-036: canCancelBooking returns true at exactly the session start '
+      'time (exclusive boundary — session start moment itself is still OK)',
       () {
         final now = DateTime(2026, 7, 20, 8, 0);
-        // Slot exactly 12h later → canCancelBooking should return true.
-        final booking = makeBooking('2026-07-20', '20:00');
+        // Slot starts exactly at now: cutoffMoment == slotStart == now,
+        // now.isAfter(now) == false → isPastCutoff = false → canCancelBooking = true
+        final booking = makeBooking('2026-07-20', '08:00');
+        expect(canCancelBooking(booking, now: now), isTrue);
+      },
+    );
+
+    test(
+      'AS-036: canCancelBooking returns true for a slot just minutes away — '
+      'no advance-notice window is enforced',
+      () {
+        final now = DateTime(2026, 7, 20, 8, 0);
+        // Slot 3 minutes in the future → should still be cancellable.
+        final booking = makeBooking('2026-07-20', '08:03');
         expect(canCancelBooking(booking, now: now), isTrue);
       },
     );
