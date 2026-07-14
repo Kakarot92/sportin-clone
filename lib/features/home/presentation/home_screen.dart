@@ -8,6 +8,7 @@ import 'package:sportin_clone/app/kinetic_effects.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/features/booking/application/booking_providers.dart';
+import 'package:sportin_clone/features/measurements/application/measurements_providers.dart';
 import 'package:sportin_clone/features/trainers/application/trainers_providers.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
 
@@ -111,6 +112,19 @@ class HomeScreen extends ConsumerWidget {
                             onTap: () => context.go('/chat'),
                           ),
                         ),
+                        const SizedBox(height: 24),
+                        // ── Dashboard summary (AS-065) ──────────────────────
+                        if (user != null) ...[
+                          Reveal(
+                            index: 8,
+                            child: SectionHeader('Pregled'),
+                          ),
+                          const SizedBox(height: 14),
+                          Reveal(
+                            index: 9,
+                            child: _DashboardSummaryTiles(uid: user.uid),
+                          ),
+                        ],
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -293,6 +307,124 @@ class _SessionPoster extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ── Dashboard summary tiles (AS-065) ──────────────────────────────────────────
+
+/// Three compact stat tiles: sessions attended, current package, latest weight.
+class _DashboardSummaryTiles extends ConsumerWidget {
+  const _DashboardSummaryTiles({required this.uid});
+
+  final String uid;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final summaryAsync = ref.watch(dashboardSummaryProvider(uid));
+
+    // While loading, render nothing — keep home layout unobtrusive.
+    if (!summaryAsync.hasValue) return const SizedBox.shrink();
+
+    final summary = summaryAsync.asData!.value;
+
+    final latestWeight = summary.latestMeasurement?.weightKg;
+    final latestDate = summary.latestMeasurement?.date;
+    String latestLabel = '—';
+    if (latestWeight != null) {
+      latestLabel = '${kDec(latestWeight)} kg';
+      if (latestDate != null) {
+        try {
+          final dt = DateTime.parse(latestDate);
+          latestLabel +=
+              '\n${DateFormat('d.M.', 'sr_Latn').format(dt)}';
+        } catch (_) {}
+      }
+    }
+
+    return Row(
+      children: [
+        Expanded(
+          child: _StatTile(
+            label: l10n.dashboardSessionsAttended,
+            child: CountUp(
+              value: summary.sessionsAttended.toDouble(),
+              style: GoogleFonts.archivoBlack(
+                fontSize: 22,
+                color: kVolt,
+                height: 1.0,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _StatTile(
+            label: l10n.dashboardCurrentPackage,
+            child: Text(
+              summary.activePackage?.packageTypeName ?? l10n.noPackage,
+              style: GoogleFonts.archivoBlack(
+                fontSize: 13,
+                color: summary.activePackage != null ? kOffWhite : kMutedDark,
+                height: 1.1,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _StatTile(
+            label: l10n.dashboardLatestMeasurement,
+            child: Text(
+              latestLabel,
+              style: GoogleFonts.archivoBlack(
+                fontSize: 13,
+                color: latestWeight != null ? kOffWhite : kMutedDark,
+                height: 1.1,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StatTile extends StatelessWidget {
+  const _StatTile({required this.label, required this.child});
+
+  final String label;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+      decoration: BoxDecoration(
+        color: kInkElevated,
+        border: Border.all(color: kLineDark),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label.toUpperCase(),
+            style: GoogleFonts.interTight(
+              fontSize: 9,
+              color: kMutedDark,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 6),
+          child,
+        ],
+      ),
     );
   }
 }

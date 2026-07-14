@@ -13,7 +13,9 @@ import '../features/booking/presentation/my_bookings_screen.dart';
 import '../features/booking/presentation/trainer_sessions_screen.dart';
 import '../features/chat/presentation/chat_screen.dart';
 import '../features/home/presentation/home_screen.dart';
+import '../features/measurements/presentation/client_measurements_screen.dart';
 import '../features/measurements/presentation/measurements_screen.dart';
+import '../features/measurements/presentation/my_clients_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/scheduling/presentation/availability_editor_screen.dart';
 import '../features/scheduling/presentation/studio_closed_days_screen.dart';
@@ -205,6 +207,25 @@ final routerProvider = Provider<GoRouter>((ref) {
                     state.pageKey,
                     const TrainerGroupClassesScreen(),
                   ),
+                ),
+                GoRoute(
+                  path: 'clients',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const MyClientsScreen(),
+                  ),
+                  routes: [
+                    GoRoute(
+                      path: ':clientUid',
+                      pageBuilder: (context, state) => _kineticPage(
+                        state.pageKey,
+                        ClientMeasurementsScreen(
+                          clientUid: state.pathParameters['clientUid']!,
+                          clientDisplayName: state.extra as String?,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

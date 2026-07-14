@@ -160,6 +160,17 @@ class ProfileScreen extends ConsumerWidget {
                     label: Text(l10n.myGroupClasses),
                   ),
                 ),
+
+              // Trainer-only client list (AS-063).
+              if (user.isTrainer)
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/clients'),
+                    icon: const Icon(Icons.people_alt_outlined),
+                    label: Text(l10n.myClients),
+                  ),
+                ),
             ],
 
             // ── Appearance settings ───────────────────────────────────────
