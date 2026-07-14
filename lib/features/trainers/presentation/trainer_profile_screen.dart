@@ -20,6 +20,7 @@ class TrainerProfileScreen extends ConsumerWidget {
     final profileAsync = ref.watch(trainerProvider(uid));
 
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         bottom: false,
         child: profileAsync.when(

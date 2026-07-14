@@ -41,6 +41,7 @@ class MyPackageScreen extends ConsumerWidget {
     final packagesAsync = ref.watch(clientPackagesProvider(me.uid));
 
     return Scaffold(
+      appBar: AppBar(),
       body: packagesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => Center(child: Text(l10n.errorGeneric)),

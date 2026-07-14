@@ -30,6 +30,7 @@ class GroupClassesScreen extends ConsumerWidget {
     final classesAsync = ref.watch(upcomingGroupClassesProvider);
 
     return Scaffold(
+      appBar: AppBar(),
       body: Stack(
         children: [
           // Faint speed-lines backdrop — mirrors trainer_directory_screen.

@@ -29,6 +29,7 @@ class MyBookingsScreen extends ConsumerWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        appBar: AppBar(),
         body: me == null
             ? const Center(child: CircularProgressIndicator())
             : NestedScrollView(
