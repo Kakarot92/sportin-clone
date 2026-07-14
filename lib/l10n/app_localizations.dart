@@ -1321,6 +1321,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'By trainer'**
   String get byTrainer;
+
+  /// No description provided for @navMyStuffSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions & Package'**
+  String get navMyStuffSection;
 }
 
 class _AppLocalizationsDelegate

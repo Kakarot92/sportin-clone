@@ -89,6 +89,53 @@ class _MeasurementsContent extends StatelessWidget {
 
   bool get _showChart => _chartEntries.length >= 2;
 
+  Widget _buildWeightHero(List<MeasurementEntry> entries) {
+    final latestWeight = entries.last.weightKg!;
+    final hasDelta = entries.length >= 2;
+    final delta = hasDelta ? latestWeight - entries.first.weightKg! : 0.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              kDec(latestWeight),
+              style: GoogleFonts.archivoBlack(
+                fontSize: 64,
+                height: 0.9,
+                color: kOffWhite,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6, left: 6),
+              child: Text(
+                'KG',
+                style: GoogleFonts.archivoBlack(
+                  fontSize: 20,
+                  color: kMutedDark,
+                ),
+              ),
+            ),
+          ],
+        ),
+        if (hasDelta) ...[
+          const SizedBox(height: 6),
+          Text(
+            '${delta >= 0 ? '+' : ''}${kDec(delta)} kg od početka',
+            style: GoogleFonts.interTight(
+              fontWeight: FontWeight.w700,
+              color: kVolt,
+              fontSize: 13,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
   void _openAddDialog(BuildContext context) {
     showDialog<void>(
       context: context,
@@ -129,6 +176,15 @@ class _MeasurementsContent extends StatelessWidget {
                   child: DisplayTitle(l10n.measurementsTitle, size: 38),
                 ),
                 const SizedBox(height: 20),
+                // Hero weight number — appears before the chart when at
+                // least one entry has a weight value.
+                if (_chartEntries.isNotEmpty) ...[
+                  Reveal(
+                    index: ri++,
+                    child: _buildWeightHero(_chartEntries),
+                  ),
+                  const SizedBox(height: 20),
+                ],
                 if (_showChart) ...[
                   Reveal(
                     index: ri++,

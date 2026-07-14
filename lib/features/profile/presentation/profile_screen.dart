@@ -46,8 +46,8 @@ class ProfileScreen extends ConsumerWidget {
             Reveal(index: ri++, child: DisplayTitle(l10n.profileTitle)),
             const SizedBox(height: 24),
 
-            // ── Identity card + action buttons ────────────────────────────
             if (user != null) ...[
+              // ── Account hero card ─────────────────────────────────────
               Reveal(
                 index: ri++,
                 child: _AccountCard(
@@ -69,132 +69,95 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 28),
 
-              // Trainer-only secondary actions.
+              // ── Section: Termini i paket (all signed-in users) ─────────
+              Reveal(index: ri++, child: SectionHeader(l10n.navMyStuffSection)),
+              const SizedBox(height: 12),
+              Reveal(
+                index: ri++,
+                child: _NavCard(rows: [
+                  _NavRow(
+                    icon: Icons.event_outlined,
+                    label: l10n.myBookings,
+                    onTap: () => context.push('/profile/bookings'),
+                  ),
+                  _NavRow(
+                    icon: Icons.card_membership_outlined,
+                    label: l10n.myPackage,
+                    onTap: () => context.push('/profile/package'),
+                  ),
+                ]),
+              ),
+
+              // ── Section: Trener (trainer only) ─────────────────────────
               if (user.isTrainer) ...[
+                const SizedBox(height: 28),
+                Reveal(index: ri++, child: SectionHeader('Trener')),
+                const SizedBox(height: 12),
                 Reveal(
                   index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/trainer-edit'),
-                    icon: const Icon(Icons.badge_outlined),
-                    label: Text(l10n.editTrainerProfile),
-                  ),
-                ),
-                Reveal(
-                  index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/availability'),
-                    icon: const Icon(Icons.calendar_today_outlined),
-                    label: Text(l10n.weeklyAvailability),
-                  ),
+                  child: _NavCard(rows: [
+                    _NavRow(
+                      icon: Icons.badge_outlined,
+                      label: l10n.editTrainerProfile,
+                      onTap: () => context.push('/profile/trainer-edit'),
+                    ),
+                    _NavRow(
+                      icon: Icons.calendar_today_outlined,
+                      label: l10n.weeklyAvailability,
+                      onTap: () => context.push('/profile/availability'),
+                    ),
+                    _NavRow(
+                      icon: Icons.people_outline,
+                      label: l10n.mySessions,
+                      onTap: () => context.push('/profile/sessions'),
+                    ),
+                    _NavRow(
+                      icon: Icons.groups_outlined,
+                      label: l10n.myGroupClasses,
+                      onTap: () => context.push('/profile/group-classes'),
+                    ),
+                    _NavRow(
+                      icon: Icons.people_alt_outlined,
+                      label: l10n.myClients,
+                      onTap: () => context.push('/profile/clients'),
+                    ),
+                  ]),
                 ),
               ],
 
-              // Admin-only secondary actions.
+              // ── Section: Admin (admin only) ────────────────────────────
               if (user.isAdmin) ...[
+                const SizedBox(height: 28),
+                Reveal(index: ri++, child: SectionHeader('Admin')),
+                const SizedBox(height: 12),
                 Reveal(
                   index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/admin-users'),
-                    icon: const Icon(Icons.admin_panel_settings_outlined),
-                    label: Text(l10n.manageRoles),
-                  ),
-                ),
-                Reveal(
-                  index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/admin-relationships'),
-                    icon: const Icon(Icons.people_alt_outlined),
-                    label: Text(l10n.trainerClientRelationships),
-                  ),
-                ),
-                Reveal(
-                  index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/admin-settings'),
-                    icon: const Icon(Icons.settings_outlined),
-                    label: Text(l10n.studioSettingsHub),
-                  ),
-                ),
-                Reveal(
-                  index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/admin-reports'),
-                    icon: const Icon(Icons.bar_chart_outlined),
-                    label: Text(l10n.bookingReports),
-                  ),
-                ),
-                Reveal(
-                  index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/studio'),
-                    icon: const Icon(Icons.store_outlined),
-                    label: Text(l10n.studioClosedDays),
-                  ),
-                ),
-                Reveal(
-                  index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/package-types'),
-                    icon: const Icon(Icons.inventory_2_outlined),
-                    label: Text(l10n.packageTypesTitle),
-                  ),
+                  child: _NavCard(rows: [
+                    _NavRow(
+                      icon: Icons.admin_panel_settings_outlined,
+                      label: l10n.manageRoles,
+                      onTap: () => context.push('/profile/admin-users'),
+                    ),
+                    _NavRow(
+                      icon: Icons.people_alt_outlined,
+                      label: l10n.trainerClientRelationships,
+                      onTap: () => context.push('/profile/admin-relationships'),
+                    ),
+                    _NavRow(
+                      icon: Icons.settings_outlined,
+                      label: l10n.studioSettingsHub,
+                      onTap: () => context.push('/profile/admin-settings'),
+                    ),
+                    _NavRow(
+                      icon: Icons.bar_chart_outlined,
+                      label: l10n.bookingReports,
+                      onTap: () => context.push('/profile/admin-reports'),
+                    ),
+                  ]),
                 ),
               ],
-
-              // All signed-in users: my package shortcut.
-              Reveal(
-                index: ri++,
-                child: OutlinedButton.icon(
-                  onPressed: () => context.push('/profile/package'),
-                  icon: const Icon(Icons.card_membership_outlined),
-                  label: Text(l10n.myPackage),
-                ),
-              ),
-
-              // All-roles booking shortcut.
-              Reveal(
-                index: ri++,
-                child: OutlinedButton.icon(
-                  onPressed: () => context.push('/profile/bookings'),
-                  icon: const Icon(Icons.event_outlined),
-                  label: Text(l10n.myBookings),
-                ),
-              ),
-
-              // Trainer-only sessions view.
-              if (user.isTrainer)
-                Reveal(
-                  index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/sessions'),
-                    icon: const Icon(Icons.people_outline),
-                    label: Text(l10n.mySessions),
-                  ),
-                ),
-
-              // Trainer-only group classes management.
-              if (user.isTrainer)
-                Reveal(
-                  index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/group-classes'),
-                    icon: const Icon(Icons.groups_outlined),
-                    label: Text(l10n.myGroupClasses),
-                  ),
-                ),
-
-              // Trainer-only client list (AS-063).
-              if (user.isTrainer)
-                Reveal(
-                  index: ri++,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/profile/clients'),
-                    icon: const Icon(Icons.people_alt_outlined),
-                    label: Text(l10n.myClients),
-                  ),
-                ),
             ],
 
             // ── Appearance settings ───────────────────────────────────────
@@ -251,6 +214,74 @@ class ProfileScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ── Nav row (icon + label + chevron, tap-friendly) ───────────────────────────
+
+class _NavRow extends StatelessWidget {
+  const _NavRow({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, color: kVolt, size: 20),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                label,
+                style: GoogleFonts.interTight(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: kOffWhite,
+                ),
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: kMutedDark, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Bordered card wrapping one or more _NavRow widgets ───────────────────────
+
+class _NavCard extends StatelessWidget {
+  const _NavCard({required this.rows});
+
+  final List<Widget> rows;
+
+  @override
+  Widget build(BuildContext context) {
+    final children = <Widget>[];
+    for (var i = 0; i < rows.length; i++) {
+      children.add(rows[i]);
+      if (i < rows.length - 1) {
+        children.add(const Divider(height: 1, color: kLineDark));
+      }
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: kInkElevated,
+        border: Border.all(color: kLineDark),
+      ),
+      child: Column(children: children),
     );
   }
 }

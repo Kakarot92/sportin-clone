@@ -642,4 +642,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get byTrainer => 'By trainer';
+
+  @override
+  String get navMyStuffSection => 'Sessions & Package';
 }

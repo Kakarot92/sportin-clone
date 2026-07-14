@@ -263,5 +263,6 @@
   "totalBookings": "Ukupno termina",
   "bookedCount": "Aktivnih termina",
   "cancelledCount": "Otkazanih",
-  "byTrainer": "Po treneru"
+  "byTrainer": "Po treneru",
+  "navMyStuffSection": "Termini i paket"
 }

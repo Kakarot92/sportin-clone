@@ -263,5 +263,6 @@
   "totalBookings": "Total bookings",
   "bookedCount": "Active bookings",
   "cancelledCount": "Cancelled",
-  "byTrainer": "By trainer"
+  "byTrainer": "By trainer",
+  "navMyStuffSection": "Sessions & Package"
 }

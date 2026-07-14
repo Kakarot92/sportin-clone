@@ -641,4 +641,7 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get byTrainer => 'Po treneru';
+
+  @override
+  String get navMyStuffSection => 'Termini i paket';
 }
