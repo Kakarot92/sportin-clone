@@ -293,12 +293,6 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
     final canCancel =
         widget.isUpcoming && !isCancelled && canCancelBooking(widget.booking);
 
-    // When the session is upcoming and not cancelled but has already started
-    // or passed, show a small muted note instead of silently hiding the
-    // action row — so the user knows why nothing appears (Bug-2 fix).
-    final showCutoffNote =
-        widget.isUpcoming && !isCancelled && !canCancelBooking(widget.booking);
-
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       decoration: BoxDecoration(
@@ -364,30 +358,6 @@ class _BookingCardState extends ConsumerState<_BookingCard> {
             ),
           ],
 
-          // ── Cutoff-locked note (Bug-2 fix) ──
-          // When the session is upcoming but already started or in the past
-          // and not cancelled, show a muted caption so the user knows why
-          // the action row is absent.
-          if (showCutoffNote) ...[
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(
-                  Icons.lock_clock_outlined,
-                  color: kMutedDark,
-                  size: 14,
-                ),
-                const SizedBox(width: 4),
-                Flexible(
-                  child: Text(
-                    l10n.cutoffPassedError,
-                    style: theme.textTheme.bodySmall
-                        ?.copyWith(color: kMutedDark),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     );

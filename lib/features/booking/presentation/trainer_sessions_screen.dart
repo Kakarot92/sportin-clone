@@ -177,15 +177,6 @@ class _SessionCardState extends ConsumerState<_SessionCard> {
     // Show cancel button only for booked sessions within the cutoff (AS-040).
     final canCancel = !isCancelled && canCancelBooking(widget.session);
 
-    // When the session is in the future, not cancelled, but the cutoff window
-    // has already passed, show a muted note so the trainer knows why the
-    // cancel button is absent (Bug-2 fix).
-    final sessionStart =
-        bookingSlotStart(widget.session.date, widget.session.start);
-    final showCutoffNote = !isCancelled &&
-        !canCancelBooking(widget.session) &&
-        sessionStart.isAfter(DateTime.now());
-
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       decoration: BoxDecoration(
@@ -256,29 +247,6 @@ class _SessionCardState extends ConsumerState<_SessionCard> {
             ),
           ],
 
-          // ── Cutoff-locked note (Bug-2 fix) ──
-          // Upcoming session that is no longer cancellable: tell the trainer
-          // why the cancel button is absent instead of silently hiding it.
-          if (showCutoffNote) ...[
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(
-                  Icons.lock_clock_outlined,
-                  color: kMutedDark,
-                  size: 14,
-                ),
-                const SizedBox(width: 4),
-                Flexible(
-                  child: Text(
-                    l10n.cutoffPassedError,
-                    style: theme.textTheme.bodySmall
-                        ?.copyWith(color: kMutedDark),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     );
