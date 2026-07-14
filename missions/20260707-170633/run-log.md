@@ -2,6 +2,40 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-15 — M11 Chat — CORE COMPLETE (media attachments deferred)
+
+Scoped to F100, F101, F103 (text-only). Skipped **F102** (image/video
+attachments via Firebase Storage — AS-068) — deferred, same pattern as
+progress photos (M12) and payments (M8): kept Storage integration out of the
+core pass. Design decision: a client may message ANY trainer directly, no
+prior-booking gate (low friction, matches "ask before booking" real-world
+studio behaviour). Two serial workers:
+
+- **Worker A (logic, F100)** — `lib/features/chat/` (`ChatMessage`,
+  `ChatThreadSummary`, `ChatRepository`). 1-on-1 threads use a deterministic
+  ID `"{trainerUid}_{clientUid}"` — same convention as `Booking.bookingDocId`
+  and the M12 `trainerClients` marker. Group class chat reuses the EXISTING
+  `groupClasses/{classId}/participants` subcollection from M7 for its
+  participant list — no new roster to maintain. `sendMessage`/
+  `sendGroupMessage` use a `WriteBatch` (thread-summary merge + message
+  insert), not a transaction — no read-before-write dependency, cheaper.
+  Firestore rules use `get()` cross-references (thread doc → participant
+  check for the `messages` subcollection; `groupClasses/{classId}` →
+  trainerUid/participants for group chat) — validated clean on the **first
+  attempt this time** (worker was explicitly warned about the M12 rules
+  syntax bug and told to hand-check every `$(...)` interpolation before
+  committing — worked). Two composite indexes added proactively, confirmed
+  READY same day. `test/chat_test.dart`.
+- **Worker B (UI, F103)** — replaced the `chat_screen.dart` placeholder with
+  a real conversation list (trainer's client threads / browse-all-trainers to
+  start a new one / joined group classes), `one_on_one_chat_screen.dart` and
+  `group_chat_screen.dart` (reversed-list message bubbles, bottom input bar).
+  Both new pushed screens correctly include `appBar: AppBar()` (worker was
+  explicitly warned about the earlier missing-back-button incident).
+
+Gate: `dart analyze lib test` clean; `flutter test` **171/171** pass. Commits
+4dba612 (F100) + 1eae66f (F103).
+
 ## 2026-07-15 — M12 Measurements & progress — CORE COMPLETE (progress photos deferred)
 
 Scoped to F110, F111, F113, F114, F115 (no photos/Storage). Skipped **F112**
