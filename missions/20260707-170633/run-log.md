@@ -2,6 +2,85 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-13 — M6 Cancellation & reschedule — CORE COMPLETE (credit refund + notify deferred)
+
+Two serial workers + one fix worker under supervision:
+
+- **Worker A (logic, F050)** — `lib/features/booking/domain/booking_policy.dart`
+  (`kCancellationCutoffHours = 12`, `isPastCutoff`, `bookingSlotStart`,
+  `canCancelBooking`), `CutoffPassedException` + `BookingNotFoundOrForbiddenException`
+  added to `booking_exceptions.dart`. `BookingRepository.cancelBooking` (sets
+  status='cancelled'; slot-freeing falls out of the existing M4
+  `status=='booked'` filter, already proven by an M4 test) and
+  `rescheduleBooking` (atomic transaction: cancel old doc + create new doc,
+  reusing the SlotTaken guard). `BookingController.cancel`/`.reschedule` added.
+  No Firestore rules changes needed (M5 rules already allow client/trainer to
+  update their own bookings). `test/booking_policy_test.dart`: 11 cases.
+  Cutoff boundary chosen **exclusive** (exactly 12h before = still cancellable).
+- **Worker B (UI, F052)** — cancel + reschedule actions on
+  `my_bookings_screen.dart` cards; `trainer_slots_screen.dart` gained a
+  `rescheduling: Booking?` mode (reschedule confirm dialog + error mapping)
+  wired via `router.dart`'s `state.extra`; trainer-cancel action added to
+  `trainer_sessions_screen.dart`. New `test/cancellation_reschedule_ui_test.dart`
+  (16 widget tests). This worker was interrupted mid-task by a session limit;
+  a **fix worker** picked up the uncommitted changes, diagnosed 2 failing
+  tests (SnackBar-timing/finder issues in the test file itself, not app bugs),
+  fixed them, and committed.
+
+Gate: `dart analyze lib test` clean; `flutter test` **56/56** pass. Commits
+4a21567 (F050) + 8803d63 (F052).
+
+**DEFERRED:** AS-037 (refund credit on cancel) — waits on credits/packages
+(F072). The "client is notified" half of AS-040 — waits on notifications
+(F083). The cancel-action itself (both client and trainer) is implemented and
+tested; only the credit-refund and notification side-effects are missing.
+
+**Process note:** for M6 the orchestrator skipped the formal `/mission-tasks`
+per-feature clarification round and did not spawn dedicated
+scrutiny-validator/ux-validator agents — same fast/informal mode used for
+M4/M5, confirmed with the user 2026-07-13 after he asked directly whether the
+mission framework was being followed. Verification substituted `dart analyze`
++ `flutter test` + manual review of each worker's diff.
+
+## 2026-07-13 — Kinetik design pass (4 sub-passes) — full app reskin
+
+The user flagged that the built app ("jako si daleko od dizajna") did not
+match the chosen **Kinetik** (Studio A) design — the real `lib/app/kinetic.dart`
+only had static primitives (Eyebrow, DisplayTitle, VoltBadge…), never the
+motion/texture/depth language (speed-lines, marquee, count-up, reveal,
+diagonal poster cuts, ghost numbers, skewed volt button) that makes Studio A
+Studio A. Source of truth: `lib/design_lab/studio_a/` (see
+[[sportin-clone-kinetik-design]] memory). Not in the original plan/contract —
+ad hoc design work, no assertion IDs.
+
+Four sequential workers, each verified (`dart analyze` clean + `flutter test`
+green) before the next started:
+
+1. **Effects port + Auth** — new `lib/app/kinetic_effects.dart` (`SpeedLines,
+   Marquee, CountUp, Reveal, DiagonalClipper, GhostText, PulseDot,
+   KineticInitials, kineticRoute`, const `kTilt`), ported from
+   `studio_a/widgets/effects.dart` with theme tokens remapped. `VoltButton` and
+   `SectionHeader` upgraded to the skewed technique. Reskinned
+   splash/login/signup/reset.
+2. **Home, nav transitions, Trainers** — home's next-training "poster block"
+   (diagonal clip + ghost time + speed-lines + pulse dot), marquee separator,
+   quick-action rows; `Reveal`-staggered trainer directory/profile with
+   `KineticInitials`; pushed routes now use the Kinetik slide+fade transition.
+3. **Scheduling + Booking** — **removed `table_calendar` entirely**, replaced
+   the client slot browser's month grid with a custom horizontal date rail +
+   big volt time-blocks (this was the screen the user specifically flagged as
+   "default Material"). Reskinned availability editor, studio closed-days,
+   my-bookings, trainer-sessions.
+4. **Measurements, Chat, Profile** — Kinetik "coming soon" placeholders (ghost
+   numerals, no fabricated data) for the two unbuilt features; profile reskin
+   (KineticInitials, VoltBadge role, skewed action buttons) keeping every
+   existing entry point/route intact.
+
+Gate after every pass: `dart analyze lib test` clean, full `flutter test`
+green (30/30 → 41/41 across the passes). Commits: cea299a (effects+auth),
+4227632 (home/trainers), 6079853 (scheduling/booking), 0704df0
+(measurements/chat/profile).
+
 ## 2026-07-13 — M5 Booking (1-on-1) — CORE COMPLETE (credits deferred)
 
 Two serial workers under supervision:
