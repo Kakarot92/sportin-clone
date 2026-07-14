@@ -121,7 +121,9 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
           ? l10n.slotTakenError
           : err is PastSlotException
               ? l10n.pastSlotError
-              : l10n.errorGeneric;
+              : err is NoActivePackageException
+                  ? l10n.noActivePackageError
+                  : l10n.errorGeneric;
       messenger.showSnackBar(SnackBar(content: Text(msg)));
     }
   }
@@ -169,7 +171,9 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
               ? l10n.pastSlotError
               : err is CutoffPassedException
                   ? l10n.cutoffPassedError
-                  : l10n.errorGeneric;
+                  : err is NoActivePackageException
+                      ? l10n.noActivePackageError
+                      : l10n.errorGeneric;
       messenger.showSnackBar(SnackBar(content: Text(msg)));
     }
   }

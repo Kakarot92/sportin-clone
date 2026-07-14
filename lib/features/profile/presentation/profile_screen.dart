@@ -109,7 +109,25 @@ class ProfileScreen extends ConsumerWidget {
                     label: Text(l10n.studioClosedDays),
                   ),
                 ),
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/package-types'),
+                    icon: const Icon(Icons.inventory_2_outlined),
+                    label: Text(l10n.packageTypesTitle),
+                  ),
+                ),
               ],
+
+              // All signed-in users: my package shortcut.
+              Reveal(
+                index: ri++,
+                child: OutlinedButton.icon(
+                  onPressed: () => context.push('/profile/package'),
+                  icon: const Icon(Icons.card_membership_outlined),
+                  label: Text(l10n.myPackage),
+                ),
+              ),
 
               // All-roles booking shortcut.
               Reveal(
