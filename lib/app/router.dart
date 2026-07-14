@@ -12,6 +12,8 @@ import '../features/auth/presentation/splash_screen.dart';
 import '../features/booking/presentation/my_bookings_screen.dart';
 import '../features/booking/presentation/trainer_sessions_screen.dart';
 import '../features/chat/presentation/chat_screen.dart';
+import '../features/chat/presentation/group_chat_screen.dart';
+import '../features/chat/presentation/one_on_one_chat_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/measurements/presentation/client_measurements_screen.dart';
 import '../features/measurements/presentation/measurements_screen.dart';
@@ -138,7 +140,31 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const MeasurementsScreen()),
           ]),
           StatefulShellBranch(routes: [
-            GoRoute(path: '/chat', builder: (context, state) => const ChatScreen()),
+            GoRoute(
+              path: '/chat',
+              builder: (context, state) => const ChatScreen(),
+              routes: [
+                GoRoute(
+                  path: 'thread/:trainerUid/:clientUid',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    OneOnOneChatScreen(
+                      trainerUid: state.pathParameters['trainerUid']!,
+                      clientUid: state.pathParameters['clientUid']!,
+                    ),
+                  ),
+                ),
+                GoRoute(
+                  path: 'group/:classId',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    GroupChatScreen(
+                      classId: state.pathParameters['classId']!,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(
