@@ -247,9 +247,6 @@ class _ReadOnlyMeasurementCard extends StatelessWidget {
 
     final fields = <String>[];
     if (entry.weightKg != null) fields.add('${kDec(entry.weightKg!)} kg');
-    if (entry.bodyFatPercent != null) {
-      fields.add('${kDec(entry.bodyFatPercent!)}% masti');
-    }
     if (entry.waistCm != null) fields.add('struk ${entry.waistCm!.round()} cm');
     if (entry.chestCm != null) fields.add('grudi ${entry.chestCm!.round()} cm');
     if (entry.hipsCm != null) fields.add('kukovi ${entry.hipsCm!.round()} cm');

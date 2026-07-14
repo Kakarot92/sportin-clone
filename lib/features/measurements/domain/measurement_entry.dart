@@ -9,7 +9,6 @@ class MeasurementEntry {
     required this.clientUid,
     required this.date,
     this.weightKg,
-    this.bodyFatPercent,
     this.waistCm,
     this.chestCm,
     this.hipsCm,
@@ -27,9 +26,6 @@ class MeasurementEntry {
 
   /// Body weight in kilograms.
   final double? weightKg;
-
-  /// Body-fat percentage (0–100).
-  final double? bodyFatPercent;
 
   /// Waist circumference in centimetres.
   final double? waistCm;
@@ -53,7 +49,6 @@ class MeasurementEntry {
       clientUid: (map['clientUid'] as String?) ?? '',
       date: (map['date'] as String?) ?? '',
       weightKg: (map['weightKg'] as num?)?.toDouble(),
-      bodyFatPercent: (map['bodyFatPercent'] as num?)?.toDouble(),
       waistCm: (map['waistCm'] as num?)?.toDouble(),
       chestCm: (map['chestCm'] as num?)?.toDouble(),
       hipsCm: (map['hipsCm'] as num?)?.toDouble(),
@@ -69,7 +64,6 @@ class MeasurementEntry {
         'clientUid': clientUid,
         'date': date,
         if (weightKg != null) 'weightKg': weightKg,
-        if (bodyFatPercent != null) 'bodyFatPercent': bodyFatPercent,
         if (waistCm != null) 'waistCm': waistCm,
         if (chestCm != null) 'chestCm': chestCm,
         if (hipsCm != null) 'hipsCm': hipsCm,

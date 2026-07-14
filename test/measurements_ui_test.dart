@@ -68,7 +68,6 @@ final _entryNoWeight = MeasurementEntry(
   id: 'e2',
   clientUid: 'client-1',
   date: '2026-07-10',
-  bodyFatPercent: 18.0,
 );
 
 final _entryWithWeight2 = MeasurementEntry(

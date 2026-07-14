@@ -537,9 +537,6 @@ class AppLocalizationsSr extends AppLocalizations {
   String get weightKg => 'Težina (kg)';
 
   @override
-  String get bodyFatPercent => 'Masti (%)';
-
-  @override
   String get waistCm => 'Struk (cm)';
 
   @override

@@ -345,9 +345,6 @@ class _MeasurementCard extends ConsumerWidget {
 
     final fields = <String>[];
     if (entry.weightKg != null) fields.add('${kDec(entry.weightKg!)} kg');
-    if (entry.bodyFatPercent != null) {
-      fields.add('${kDec(entry.bodyFatPercent!)}% masti');
-    }
     if (entry.waistCm != null) fields.add('struk ${entry.waistCm!.round()} cm');
     if (entry.chestCm != null) fields.add('grudi ${entry.chestCm!.round()} cm');
     if (entry.hipsCm != null) fields.add('kukovi ${entry.hipsCm!.round()} cm');
@@ -438,7 +435,6 @@ class _MeasurementDialog extends ConsumerStatefulWidget {
 class _MeasurementDialogState extends ConsumerState<_MeasurementDialog> {
   late DateTime _pickedDate;
   late final TextEditingController _weight;
-  late final TextEditingController _fat;
   late final TextEditingController _waist;
   late final TextEditingController _chest;
   late final TextEditingController _hips;
@@ -454,8 +450,6 @@ class _MeasurementDialogState extends ConsumerState<_MeasurementDialog> {
         : DateTime.now();
     _weight = TextEditingController(
         text: e?.weightKg != null ? e!.weightKg!.toString() : '');
-    _fat = TextEditingController(
-        text: e?.bodyFatPercent != null ? e!.bodyFatPercent!.toString() : '');
     _waist = TextEditingController(
         text: e?.waistCm != null ? e!.waistCm!.toString() : '');
     _chest = TextEditingController(
@@ -468,7 +462,6 @@ class _MeasurementDialogState extends ConsumerState<_MeasurementDialog> {
   @override
   void dispose() {
     _weight.dispose();
-    _fat.dispose();
     _waist.dispose();
     _chest.dispose();
     _hips.dispose();
@@ -499,7 +492,6 @@ class _MeasurementDialogState extends ConsumerState<_MeasurementDialog> {
       clientUid: widget.uid,
       date: ymd(_pickedDate),
       weightKg: double.tryParse(_weight.text.trim()),
-      bodyFatPercent: double.tryParse(_fat.text.trim()),
       waistCm: double.tryParse(_waist.text.trim()),
       chestCm: double.tryParse(_chest.text.trim()),
       hipsCm: double.tryParse(_hips.text.trim()),
@@ -555,13 +547,6 @@ class _MeasurementDialogState extends ConsumerState<_MeasurementDialog> {
             KineticField(
               label: l10n.weightKg,
               controller: _weight,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-            ),
-            const SizedBox(height: 10),
-            KineticField(
-              label: l10n.bodyFatPercent,
-              controller: _fat,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
             ),

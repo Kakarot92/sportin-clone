@@ -4,7 +4,7 @@
 //
 // Assertions covered:
 //   AS-056  A client can record a body-measurement entry (weight,
-//           circumferences, body-fat %) dated.
+//           circumferences) dated.
 //   AS-057  Only the client can create their own measurement entries.
 //           (Enforced server-side; domain model carries the clientUid field
 //           that Firestore rules check — verified via toMap round-trip.)
@@ -35,7 +35,6 @@ void main() {
           'clientUid': 'c1',
           'date': '2026-07-14',
           'weightKg': 75.5,
-          'bodyFatPercent': 18.2,
           'waistCm': 80.0,
           'chestCm': 95.0,
           'hipsCm': 100.0,
@@ -48,7 +47,6 @@ void main() {
         expect(entry.clientUid, 'c1');
         expect(entry.date, '2026-07-14');
         expect(entry.weightKg, 75.5);
-        expect(entry.bodyFatPercent, 18.2);
         expect(entry.waistCm, 80.0);
         expect(entry.chestCm, 95.0);
         expect(entry.hipsCm, 100.0);
@@ -58,7 +56,6 @@ void main() {
         expect(result['clientUid'], 'c1');
         expect(result['date'], '2026-07-14');
         expect(result['weightKg'], 75.5);
-        expect(result['bodyFatPercent'], 18.2);
         expect(result['waistCm'], 80.0);
         expect(result['chestCm'], 95.0);
         expect(result['hipsCm'], 100.0);
@@ -79,7 +76,6 @@ void main() {
         final entry = MeasurementEntry.fromMap('entry-002', map);
 
         expect(entry.weightKg, 68.0);
-        expect(entry.bodyFatPercent, isNull);
         expect(entry.waistCm, isNull);
         expect(entry.chestCm, isNull);
         expect(entry.hipsCm, isNull);
@@ -87,8 +83,6 @@ void main() {
 
         final result = entry.toMap();
         expect(result['weightKg'], 68.0);
-        expect(result.containsKey('bodyFatPercent'), isFalse,
-            reason: 'null fields should be omitted');
         expect(result.containsKey('waistCm'), isFalse);
         expect(result.containsKey('chestCm'), isFalse);
         expect(result.containsKey('hipsCm'), isFalse);
@@ -123,7 +117,6 @@ void main() {
           'clientUid': 'c4',
           'date': '2026-07-10',
           'weightKg': 80, // int, not double
-          'bodyFatPercent': 20, // int, not double
           'waistCm': 85, // int
         };
 
@@ -131,8 +124,6 @@ void main() {
 
         expect(entry.weightKg, isA<double>());
         expect(entry.weightKg, 80.0);
-        expect(entry.bodyFatPercent, isA<double>());
-        expect(entry.bodyFatPercent, 20.0);
         expect(entry.waistCm, isA<double>());
         expect(entry.waistCm, 85.0);
       },
@@ -172,7 +163,6 @@ void main() {
         final entry = MeasurementEntry.fromMap('entry-005', map);
 
         expect(entry.weightKg, isNull);
-        expect(entry.bodyFatPercent, isNull);
         expect(entry.waistCm, 78.5);
         expect(entry.chestCm, isNull);
         expect(entry.hipsCm, 97.0);
@@ -180,7 +170,6 @@ void main() {
 
         final result = entry.toMap();
         expect(result.containsKey('weightKg'), isFalse);
-        expect(result.containsKey('bodyFatPercent'), isFalse);
         expect(result.containsKey('chestCm'), isFalse);
         expect(result['waistCm'], 78.5);
         expect(result['hipsCm'], 97.0);

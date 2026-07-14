@@ -1112,12 +1112,6 @@ abstract class AppLocalizations {
   /// **'Weight (kg)'**
   String get weightKg;
 
-  /// No description provided for @bodyFatPercent.
-  ///
-  /// In en, this message translates to:
-  /// **'Body fat (%)'**
-  String get bodyFatPercent;
-
   /// No description provided for @waistCm.
   ///
   /// In en, this message translates to:
