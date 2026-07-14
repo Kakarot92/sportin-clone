@@ -474,4 +474,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusDepleted => 'Depleted';
+
+  @override
+  String get groupClasses => 'Group classes';
+
+  @override
+  String get createGroupClass => 'New group class';
+
+  @override
+  String get classTitle => 'Class name';
+
+  @override
+  String get classCapacity => 'Capacity';
+
+  @override
+  String get classDate => 'Date';
+
+  @override
+  String get classTime => 'Time';
+
+  @override
+  String get classCreated => 'Class created.';
+
+  @override
+  String get joinClass => 'Join';
+
+  @override
+  String get leaveClass => 'Leave';
+
+  @override
+  String spotsLeft(int n) {
+    return '$n spot(s) left';
+  }
+
+  @override
+  String get classFull => 'Full';
+
+  @override
+  String get classFullError => 'This class is full.';
+
+  @override
+  String get alreadyJoinedError => 'You are already signed up for this class.';
+
+  @override
+  String get joinedSuccess => 'You have joined the class.';
+
+  @override
+  String get leftSuccess => 'You have left the class.';
+
+  @override
+  String get noUpcomingClasses => 'No group classes scheduled at the moment.';
+
+  @override
+  String get myGroupClasses => 'My group classes';
+
+  @override
+  String get noGroupClassesYet => 'You haven\'t created any classes yet.';
 }

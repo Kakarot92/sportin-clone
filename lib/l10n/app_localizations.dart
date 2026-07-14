@@ -991,6 +991,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Depleted'**
   String get statusDepleted;
+
+  /// No description provided for @groupClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Group classes'**
+  String get groupClasses;
+
+  /// No description provided for @createGroupClass.
+  ///
+  /// In en, this message translates to:
+  /// **'New group class'**
+  String get createGroupClass;
+
+  /// No description provided for @classTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Class name'**
+  String get classTitle;
+
+  /// No description provided for @classCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity'**
+  String get classCapacity;
+
+  /// No description provided for @classDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get classDate;
+
+  /// No description provided for @classTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get classTime;
+
+  /// No description provided for @classCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Class created.'**
+  String get classCreated;
+
+  /// No description provided for @joinClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get joinClass;
+
+  /// No description provided for @leaveClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get leaveClass;
+
+  /// Number of remaining spots in a group class
+  ///
+  /// In en, this message translates to:
+  /// **'{n} spot(s) left'**
+  String spotsLeft(int n);
+
+  /// No description provided for @classFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get classFull;
+
+  /// No description provided for @classFullError.
+  ///
+  /// In en, this message translates to:
+  /// **'This class is full.'**
+  String get classFullError;
+
+  /// No description provided for @alreadyJoinedError.
+  ///
+  /// In en, this message translates to:
+  /// **'You are already signed up for this class.'**
+  String get alreadyJoinedError;
+
+  /// No description provided for @joinedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'You have joined the class.'**
+  String get joinedSuccess;
+
+  /// No description provided for @leftSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'You have left the class.'**
+  String get leftSuccess;
+
+  /// No description provided for @noUpcomingClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'No group classes scheduled at the moment.'**
+  String get noUpcomingClasses;
+
+  /// No description provided for @myGroupClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'My group classes'**
+  String get myGroupClasses;
+
+  /// No description provided for @noGroupClassesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You haven\'t created any classes yet.'**
+  String get noGroupClassesYet;
 }
 
 class _AppLocalizationsDelegate

@@ -200,5 +200,31 @@
   "noActivePackageError": "Nemaš aktivan paket ili su ti krediti potrošeni. Kontaktiraj studio.",
   "statusActive": "Aktivan",
   "statusExpired": "Istekao",
-  "statusDepleted": "Potrošen"
+  "statusDepleted": "Potrošen",
+  "groupClasses": "Grupni časovi",
+  "createGroupClass": "Novi grupni čas",
+  "classTitle": "Naziv časa",
+  "classCapacity": "Kapacitet",
+  "classDate": "Datum",
+  "classTime": "Vreme",
+  "classCreated": "Čas je kreiran.",
+  "joinClass": "Prijavi se",
+  "leaveClass": "Odjavi se",
+  "spotsLeft": "{n} slobodno",
+  "@spotsLeft": {
+    "description": "Broj slobodnih mesta na grupnom času",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "classFull": "Popunjeno",
+  "classFullError": "Čas je popunjen.",
+  "alreadyJoinedError": "Već si prijavljen/a na ovaj čas.",
+  "joinedSuccess": "Prijavljen/a si na čas.",
+  "leftSuccess": "Odjavljen/a si sa časa.",
+  "noUpcomingClasses": "Trenutno nema zakazanih grupnih časova.",
+  "myGroupClasses": "Moji grupni časovi",
+  "noGroupClassesYet": "Još nisi kreirao/la nijedan čas."
 }

@@ -473,4 +473,60 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get statusDepleted => 'Potrošen';
+
+  @override
+  String get groupClasses => 'Grupni časovi';
+
+  @override
+  String get createGroupClass => 'Novi grupni čas';
+
+  @override
+  String get classTitle => 'Naziv časa';
+
+  @override
+  String get classCapacity => 'Kapacitet';
+
+  @override
+  String get classDate => 'Datum';
+
+  @override
+  String get classTime => 'Vreme';
+
+  @override
+  String get classCreated => 'Čas je kreiran.';
+
+  @override
+  String get joinClass => 'Prijavi se';
+
+  @override
+  String get leaveClass => 'Odjavi se';
+
+  @override
+  String spotsLeft(int n) {
+    return '$n slobodno';
+  }
+
+  @override
+  String get classFull => 'Popunjeno';
+
+  @override
+  String get classFullError => 'Čas je popunjen.';
+
+  @override
+  String get alreadyJoinedError => 'Već si prijavljen/a na ovaj čas.';
+
+  @override
+  String get joinedSuccess => 'Prijavljen/a si na čas.';
+
+  @override
+  String get leftSuccess => 'Odjavljen/a si sa časa.';
+
+  @override
+  String get noUpcomingClasses => 'Trenutno nema zakazanih grupnih časova.';
+
+  @override
+  String get myGroupClasses => 'Moji grupni časovi';
+
+  @override
+  String get noGroupClassesYet => 'Još nisi kreirao/la nijedan čas.';
 }

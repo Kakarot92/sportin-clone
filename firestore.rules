@@ -113,6 +113,31 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ── M7: Group classes ───────────────────────────────────────────────────
+    //
+    // Trainers create/manage their own classes; any signed-in user may read
+    // and join/leave (joining updates `joinedCount`, a field on a doc the
+    // trainer owns — scoped narrowly via affectedKeys() so a client can ONLY
+    // ever touch that one field, never rewrite the class).
+    match /groupClasses/{classId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn()
+        && roleOf(request.auth.uid) == 'trainer'
+        && request.resource.data.trainerUid == request.auth.uid;
+      allow update: if isAdmin()
+        || (isSignedIn() && resource.data.trainerUid == request.auth.uid)
+        || (isSignedIn()
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['joinedCount']));
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.trainerUid == request.auth.uid);
+
+      match /participants/{clientUid} {
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && request.auth.uid == clientUid;
+        allow delete: if isSignedIn() && request.auth.uid == clientUid;
+        allow update: if false;
+      }
+    }
+
     // Everything else is denied until its own milestone adds explicit rules.
     match /{document=**} {
       allow read, write: if false;

@@ -200,5 +200,31 @@
   "noActivePackageError": "You have no active package or your credits are depleted. Contact the studio.",
   "statusActive": "Active",
   "statusExpired": "Expired",
-  "statusDepleted": "Depleted"
+  "statusDepleted": "Depleted",
+  "groupClasses": "Group classes",
+  "createGroupClass": "New group class",
+  "classTitle": "Class name",
+  "classCapacity": "Capacity",
+  "classDate": "Date",
+  "classTime": "Time",
+  "classCreated": "Class created.",
+  "joinClass": "Join",
+  "leaveClass": "Leave",
+  "spotsLeft": "{n} spot(s) left",
+  "@spotsLeft": {
+    "description": "Number of remaining spots in a group class",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "classFull": "Full",
+  "classFullError": "This class is full.",
+  "alreadyJoinedError": "You are already signed up for this class.",
+  "joinedSuccess": "You have joined the class.",
+  "leftSuccess": "You have left the class.",
+  "noUpcomingClasses": "No group classes scheduled at the moment.",
+  "myGroupClasses": "My group classes",
+  "noGroupClassesYet": "You haven't created any classes yet."
 }
