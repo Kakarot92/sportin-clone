@@ -138,6 +138,31 @@ service cloud.firestore {
       }
     }
 
+    // ── M12: Measurements ───────────────────────────────────────────────────
+
+    // M12: body-measurement entries. Client owns their own entries; their
+    // trainer(s) — determined via the trainerClients marker below — may read
+    // but never write (AS-057, AS-062, AS-063, AS-064).
+    match /measurements/{id} {
+      allow read: if isSignedIn()
+        && (isSelf(resource.data.clientUid)
+            || isAdmin()
+            || (roleOf(request.auth.uid) == 'trainer'
+                && exists(/databases/$(database)/documents/trainerClients/$(request.auth.uid)_$(resource.data.clientUid))));
+      allow create: if isSignedIn() && request.resource.data.clientUid == request.auth.uid;
+      allow update, delete: if isAdmin() || (isSignedIn() && resource.data.clientUid == request.auth.uid);
+    }
+
+    // M12: trainer-client relationship marker, upserted when a client books a
+    // trainer. Lets security rules answer "is this trainer's client" without a
+    // collection query (rules can only exists()/get() a known doc path).
+    match /trainerClients/{id} {
+      allow read: if isSignedIn()
+        && (isSelf(resource.data.trainerUid) || isSelf(resource.data.clientUid) || isAdmin());
+      allow create, update: if isSignedIn() && request.resource.data.clientUid == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+
     // Everything else is denied until its own milestone adds explicit rules.
     match /{document=**} {
       allow read, write: if false;

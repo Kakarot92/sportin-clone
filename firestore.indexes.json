@@ -67,6 +67,22 @@
         { "fieldPath": "date", "order": "ASCENDING" },
         { "fieldPath": "start", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "measurements",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "clientUid", "order": "ASCENDING" },
+        { "fieldPath": "date", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "trainerClients",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "trainerUid", "order": "ASCENDING" },
+        { "fieldPath": "firstBookedAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

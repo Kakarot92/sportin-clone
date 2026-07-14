@@ -529,4 +529,61 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get noGroupClassesYet => 'Još nisi kreirao/la nijedan čas.';
+
+  @override
+  String get addMeasurement => 'Nova mera';
+
+  @override
+  String get weightKg => 'Težina (kg)';
+
+  @override
+  String get bodyFatPercent => 'Masti (%)';
+
+  @override
+  String get waistCm => 'Struk (cm)';
+
+  @override
+  String get chestCm => 'Grudi (cm)';
+
+  @override
+  String get hipsCm => 'Kukovi (cm)';
+
+  @override
+  String get measurementNote => 'Beleška';
+
+  @override
+  String get measurementSaved => 'Mera je sačuvana.';
+
+  @override
+  String get measurementDeleted => 'Mera je obrisana.';
+
+  @override
+  String get noMeasurementsYet => 'Još nema unetih mera.';
+
+  @override
+  String get deleteMeasurement => 'Obriši meru';
+
+  @override
+  String get editMeasurement => 'Izmeni meru';
+
+  @override
+  String get myClients => 'Moji klijenti';
+
+  @override
+  String get noClientsYet => 'Još nemaš klijenata.';
+
+  @override
+  String get clientMeasurements => 'Merenja klijenta';
+
+  @override
+  String get dashboardSessionsAttended => 'Odrađeno treninga';
+
+  @override
+  String get dashboardCurrentPackage => 'Trenutni paket';
+
+  @override
+  String get dashboardLatestMeasurement => 'Poslednja mera';
+
+  @override
+  String get noPackage => 'Nema paketa';
 }

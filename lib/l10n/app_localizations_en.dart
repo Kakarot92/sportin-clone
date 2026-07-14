@@ -530,4 +530,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noGroupClassesYet => 'You haven\'t created any classes yet.';
+
+  @override
+  String get addMeasurement => 'New measurement';
+
+  @override
+  String get weightKg => 'Weight (kg)';
+
+  @override
+  String get bodyFatPercent => 'Body fat (%)';
+
+  @override
+  String get waistCm => 'Waist (cm)';
+
+  @override
+  String get chestCm => 'Chest (cm)';
+
+  @override
+  String get hipsCm => 'Hips (cm)';
+
+  @override
+  String get measurementNote => 'Note';
+
+  @override
+  String get measurementSaved => 'Measurement saved.';
+
+  @override
+  String get measurementDeleted => 'Measurement deleted.';
+
+  @override
+  String get noMeasurementsYet => 'No measurements recorded yet.';
+
+  @override
+  String get deleteMeasurement => 'Delete measurement';
+
+  @override
+  String get editMeasurement => 'Edit measurement';
+
+  @override
+  String get myClients => 'My clients';
+
+  @override
+  String get noClientsYet => 'You don\'t have any clients yet.';
+
+  @override
+  String get clientMeasurements => 'Client measurements';
+
+  @override
+  String get dashboardSessionsAttended => 'Sessions attended';
+
+  @override
+  String get dashboardCurrentPackage => 'Current package';
+
+  @override
+  String get dashboardLatestMeasurement => 'Latest measurement';
+
+  @override
+  String get noPackage => 'No package';
 }

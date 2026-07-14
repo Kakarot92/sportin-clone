@@ -1099,6 +1099,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You haven\'t created any classes yet.'**
   String get noGroupClassesYet;
+
+  /// No description provided for @addMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'New measurement'**
+  String get addMeasurement;
+
+  /// No description provided for @weightKg.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight (kg)'**
+  String get weightKg;
+
+  /// No description provided for @bodyFatPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Body fat (%)'**
+  String get bodyFatPercent;
+
+  /// No description provided for @waistCm.
+  ///
+  /// In en, this message translates to:
+  /// **'Waist (cm)'**
+  String get waistCm;
+
+  /// No description provided for @chestCm.
+  ///
+  /// In en, this message translates to:
+  /// **'Chest (cm)'**
+  String get chestCm;
+
+  /// No description provided for @hipsCm.
+  ///
+  /// In en, this message translates to:
+  /// **'Hips (cm)'**
+  String get hipsCm;
+
+  /// No description provided for @measurementNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get measurementNote;
+
+  /// No description provided for @measurementSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement saved.'**
+  String get measurementSaved;
+
+  /// No description provided for @measurementDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurement deleted.'**
+  String get measurementDeleted;
+
+  /// No description provided for @noMeasurementsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No measurements recorded yet.'**
+  String get noMeasurementsYet;
+
+  /// No description provided for @deleteMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete measurement'**
+  String get deleteMeasurement;
+
+  /// No description provided for @editMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit measurement'**
+  String get editMeasurement;
+
+  /// No description provided for @myClients.
+  ///
+  /// In en, this message translates to:
+  /// **'My clients'**
+  String get myClients;
+
+  /// No description provided for @noClientsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any clients yet.'**
+  String get noClientsYet;
+
+  /// No description provided for @clientMeasurements.
+  ///
+  /// In en, this message translates to:
+  /// **'Client measurements'**
+  String get clientMeasurements;
+
+  /// No description provided for @dashboardSessionsAttended.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions attended'**
+  String get dashboardSessionsAttended;
+
+  /// No description provided for @dashboardCurrentPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Current package'**
+  String get dashboardCurrentPackage;
+
+  /// No description provided for @dashboardLatestMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest measurement'**
+  String get dashboardLatestMeasurement;
+
+  /// No description provided for @noPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'No package'**
+  String get noPackage;
 }
 
 class _AppLocalizationsDelegate

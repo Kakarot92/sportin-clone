@@ -57,6 +57,9 @@ class BookingRepository {
   ///    if concurrently depleted), then decrements credits (AS-034).
   ///    Writes (or overwrites a cancelled doc) the booking document with
   ///    `status: 'booked'` and `packageId` set (AS-027).
+  ///    Also upserts a `trainerClients/{trainerUid}_{clientUid}` marker so
+  ///    that Firestore security rules can verify the trainer-client relationship
+  ///    via `exists()` without a collection query (M12 AS-063, AS-064).
   Future<void> createBooking({
     required String trainerUid,
     required String clientUid,
@@ -83,9 +86,26 @@ class BookingRepository {
       throw const NoActivePackageException();
     }
 
+    // ── M12: pre-read client display name for trainer-client marker ───────
+    // Done outside the transaction (same pattern as _findActivePackage above)
+    // so the transaction body only needs writes and the minimal bookings read.
+    String clientDisplayName = '';
+    try {
+      final userSnap =
+          await _db.collection('users').doc(clientUid).get();
+      clientDisplayName =
+          (userSnap.data()?['displayName'] as String?) ?? '';
+    } catch (_) {
+      // Non-critical: if the read fails the marker still gets written, just
+      // without a display name. The document is updated on the next booking.
+    }
+
     // ── 3. Transactional write ────────────────────────────────────────────
     final docId = Booking.bookingDocId(trainerUid, ymd(date), start);
     final bookingRef = _db.collection('bookings').doc(docId);
+    final trainerClientRef = _db
+        .collection('trainerClients')
+        .doc('${trainerUid}_$clientUid');
 
     await _db.runTransaction((tx) async {
       // ── All reads first ──────────────────────────────────────────────
@@ -125,6 +145,20 @@ class BookingRepository {
         'packageId': activePackage.id,
         'createdAt': FieldValue.serverTimestamp(),
       });
+
+      // ── Write: upsert trainer-client relationship marker (M12) ────
+      // SetOptions(merge: true) makes this idempotent — repeat bookings
+      // just refresh the timestamp without duplicating or erroring.
+      tx.set(
+        trainerClientRef,
+        {
+          'trainerUid': trainerUid,
+          'clientUid': clientUid,
+          'clientDisplayName': clientDisplayName,
+          'firstBookedAt': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      );
     });
   }
 
