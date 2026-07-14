@@ -2,6 +2,40 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-14 — M7 Group classes — COMPLETE
+
+Two serial workers:
+
+- **Worker A (logic, F060)** — `lib/features/group_classes/` (`GroupClass`
+  model with `remainingSpots`/`isFull`, `ClassFullException`/
+  `AlreadyJoinedException`, `GroupClassRepository`, providers,
+  `GroupClassController`). Storage: `groupClasses/{autoId}` (trainerUid,
+  title, date, start, end, capacity, joinedCount) +
+  `groupClasses/{id}/participants/{clientUid}` subcollection — the
+  deterministic doc ID (= clientUid) makes "can't join twice" a natural
+  side-effect (AS-046), enforced again explicitly for a clean error message.
+  `joinClass`/`leaveClass` run as transactions re-reading capacity/joinedCount
+  fresh to avoid overshoot races (AS-042, AS-043, AS-044). `leaveClass` reuses
+  the existing `isPastCutoff`/`CutoffPassedException` from the booking
+  feature (AS-045 — same "before it starts" policy, same message, no
+  duplicated concept). Firestore rules use `diff().affectedKeys()` to let any
+  signed-in client update ONLY `joinedCount` on a class doc they don't own,
+  while the trainer/admin keep full write access — validated + **deployed**.
+  Two composite indexes added proactively (`date+start`,
+  `trainerUid+date+start`) — learned from the earlier M4 index-forgetting
+  incident, confirmed READY same day. `test/group_classes_test.dart`.
+- **Worker B (UI, F063)** — `lib/features/group_classes/presentation/`
+  (`group_classes_screen` — client browse/join/leave with live spots-left
+  and full-badge; `trainer_group_classes_screen` — trainer creates classes +
+  read-only roster-count view of their own). Routes `/schedule/group-classes`
+  (entry point added to the Schedule tab's trainer-directory header) and
+  `/profile/group-classes` (trainer-only, mirrors the "Moja dostupnost"
+  entry pattern).
+
+Gate: `dart analyze lib test` clean; `flutter test` **107/107** pass.
+Commits 154a84c (F060) + ef22a9c (F063). No deferrals — all six M7
+assertions (AS-041…AS-046) are fully implemented, not partially scoped.
+
 ## 2026-07-14 — M8 Packages/memberships — CORE COMPLETE (payment provider deferred), closes M5/M6 credit-gate deferrals
 
 Scoped to F070–F073 (manual assignment only); skipped F074–F077 (card
