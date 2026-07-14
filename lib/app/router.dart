@@ -17,6 +17,7 @@ import '../features/measurements/presentation/measurements_screen.dart';
 import '../features/profile/presentation/profile_screen.dart';
 import '../features/scheduling/presentation/availability_editor_screen.dart';
 import '../features/scheduling/presentation/studio_closed_days_screen.dart';
+import '../features/scheduling/domain/booking.dart';
 import '../features/scheduling/presentation/trainer_slots_screen.dart';
 import '../features/trainers/presentation/trainer_directory_screen.dart';
 import '../features/trainers/presentation/trainer_edit_screen.dart';
@@ -109,6 +110,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                         state.pageKey,
                         TrainerSlotsScreen(
                           trainerUid: state.pathParameters['uid']!,
+                          rescheduling: state.extra as Booking?,
                         ),
                       ),
                     ),

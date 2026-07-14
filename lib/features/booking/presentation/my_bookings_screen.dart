@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:sportin_clone/app/kinetic.dart';
@@ -7,6 +8,8 @@ import 'package:sportin_clone/app/kinetic_effects.dart';
 import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/features/booking/application/booking_providers.dart';
+import 'package:sportin_clone/features/booking/domain/booking_exceptions.dart';
+import 'package:sportin_clone/features/booking/domain/booking_policy.dart';
 import 'package:sportin_clone/features/trainers/application/trainers_providers.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
 
@@ -144,7 +147,7 @@ class _UpcomingTab extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 10),
             child: Reveal(
               index: i,
-              child: _BookingCard(booking: bookings[i]),
+              child: _BookingCard(booking: bookings[i], isUpcoming: true),
             ),
           ),
         );
@@ -195,18 +198,78 @@ class _HistoryTab extends ConsumerWidget {
 
 // ─── Booking card ─────────────────────────────────────────────────────────────
 
-class _BookingCard extends ConsumerWidget {
-  const _BookingCard({required this.booking});
+class _BookingCard extends ConsumerStatefulWidget {
+  const _BookingCard({required this.booking, this.isUpcoming = false});
 
   final Booking booking;
 
+  /// When [isUpcoming] is true and the booking is within the cancellation
+  /// cutoff, cancel and reschedule action buttons are shown.
+  final bool isUpcoming;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_BookingCard> createState() => _BookingCardState();
+}
+
+class _BookingCardState extends ConsumerState<_BookingCard> {
+  /// Prompts the user for confirmation, then cancels the booking.
+  Future<void> _cancel() async {
+    final l10n = AppLocalizations.of(context);
+    // Capture messenger before the async gap (AS-035 safe pattern).
+    final messenger = ScaffoldMessenger.of(context);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.cancelConfirmTitle),
+        content: Text(l10n.cancelConfirmBody(widget.booking.start)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.cancelBooking),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    final ok = await ref
+        .read(bookingControllerProvider.notifier)
+        .cancel(widget.booking);
+
+    if (!mounted) return;
+
+    if (ok) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.cancelSuccess)));
+    } else {
+      final err = ref.read(bookingControllerProvider).error;
+      final msg = err is CutoffPassedException
+          ? l10n.cutoffPassedError(kCancellationCutoffHours)
+          : l10n.errorGeneric;
+      messenger.showSnackBar(SnackBar(content: Text(msg)));
+    }
+  }
+
+  /// Navigates to the trainer's slot browser in reschedule mode.
+  void _reschedule() {
+    context.push(
+      '/schedule/trainer/${widget.booking.trainerUid}/slots',
+      extra: widget.booking,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     // Parse date for display.
-    final dateStr = booking.date; // "YYYY-MM-DD"
+    final dateStr = widget.booking.date; // "YYYY-MM-DD"
     String formattedDate = dateStr;
     try {
       final dt = DateTime.parse(dateStr);
@@ -217,52 +280,121 @@ class _BookingCard extends ConsumerWidget {
 
     // Trainer name.
     final trainerName = ref
-        .watch(trainerProvider(booking.trainerUid))
+        .watch(trainerProvider(widget.booking.trainerUid))
         .asData
         ?.value
         ?.displayName;
 
-    final isCancelled = booking.status == 'cancelled';
+    final isCancelled = widget.booking.status == 'cancelled';
     final badgeLabel = isCancelled ? l10n.statusCancelled : l10n.statusBooked;
+
+    // Show action buttons only when the session is upcoming, booked, and
+    // within the cancellation cutoff window (AS-035, AS-036).
+    final canCancel =
+        widget.isUpcoming && !isCancelled && canCancelBooking(widget.booking);
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       decoration: BoxDecoration(
         color: kInkElevated,
-        border: Border.all(color: isCancelled ? kDanger.withValues(alpha: 0.4) : kLineDark),
+        border: Border.all(
+            color: isCancelled ? kDanger.withValues(alpha: 0.4) : kLineDark),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Big Archivo Black time
-                Text(
-                  '${booking.start}–${booking.end}',
-                  style: GoogleFonts.archivoBlack(
-                    color: kOffWhite,
-                    fontSize: 20,
-                    height: 1.0,
-                  ),
+          // ── Time, date, trainer and badge ──
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Big Archivo Black time
+                    Text(
+                      '${widget.booking.start}–${widget.booking.end}',
+                      style: GoogleFonts.archivoBlack(
+                        color: kOffWhite,
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(formattedDate, style: theme.textTheme.bodyMedium),
+                    if (trainerName != null && trainerName.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(trainerName, style: theme.textTheme.bodyMedium),
+                    ],
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(formattedDate, style: theme.textTheme.bodyMedium),
-                if (trainerName != null && trainerName.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(trainerName, style: theme.textTheme.bodyMedium),
-                ],
+              ),
+              const SizedBox(width: 8),
+              // Status badge — kDanger tone for cancelled
+              isCancelled
+                  ? _DangerBadge(badgeLabel)
+                  : VoltBadge(badgeLabel, filled: true),
+            ],
+          ),
+
+          // ── Cancel / Reschedule actions (AS-035, AS-039) ──
+          if (canCancel) ...[
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _ActionButton(
+                  label: l10n.reschedule,
+                  color: kVolt,
+                  onPressed: _reschedule,
+                ),
+                const SizedBox(width: 8),
+                _ActionButton(
+                  label: l10n.cancelBooking,
+                  color: kDanger,
+                  onPressed: _cancel,
+                ),
               ],
             ),
-          ),
-          const SizedBox(width: 8),
-          // Status badge — kDanger tone for cancelled
-          isCancelled
-              ? _DangerBadge(badgeLabel)
-              : VoltBadge(badgeLabel, filled: true),
+          ],
         ],
       ),
+    );
+  }
+}
+
+// ─── Small inline action button ───────────────────────────────────────────────
+
+/// Compact sharp-cornered outline button for cancel/reschedule card actions.
+/// Tap target is ≥48dp (enforced by [minimumSize]).
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.label,
+    required this.color,
+    required this.onPressed,
+  });
+
+  final String label;
+  final Color color;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: color,
+        side: BorderSide(color: color),
+        minimumSize: const Size(0, 48),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        shape: const RoundedRectangleBorder(),
+        textStyle: GoogleFonts.interTight(
+          fontWeight: FontWeight.w700,
+          fontSize: 12,
+          letterSpacing: 0.6,
+        ),
+      ),
+      onPressed: onPressed,
+      child: Text(label),
     );
   }
 }

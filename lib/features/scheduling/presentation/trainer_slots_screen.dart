@@ -7,7 +7,9 @@ import 'package:sportin_clone/app/theme.dart';
 import 'package:sportin_clone/features/auth/application/auth_providers.dart';
 import 'package:sportin_clone/features/booking/application/booking_providers.dart';
 import 'package:sportin_clone/features/booking/domain/booking_exceptions.dart';
+import 'package:sportin_clone/features/booking/domain/booking_policy.dart';
 import 'package:sportin_clone/features/scheduling/application/scheduling_providers.dart';
+import 'package:sportin_clone/features/scheduling/domain/booking.dart';
 import 'package:sportin_clone/features/scheduling/domain/slot.dart';
 import 'package:sportin_clone/features/trainers/application/trainers_providers.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
@@ -16,10 +18,22 @@ import 'package:sportin_clone/l10n/app_localizations.dart';
 ///
 /// Route: /schedule/trainer/:uid/slots
 /// Kinetik design: horizontal date rail + volt slot blocks (no table_calendar).
+///
+/// When [rescheduling] is non-null the screen operates in "reschedule mode":
+/// the header changes to signal the context and tapping a slot triggers a
+/// reschedule-confirm dialog instead of the normal booking dialog (AS-039).
 class TrainerSlotsScreen extends ConsumerStatefulWidget {
-  const TrainerSlotsScreen({super.key, required this.trainerUid});
+  const TrainerSlotsScreen({
+    super.key,
+    required this.trainerUid,
+    this.rescheduling,
+  });
 
   final String trainerUid;
+
+  /// When set, the screen is in reschedule mode: the user is moving this
+  /// existing booking to a new slot instead of creating a fresh booking.
+  final Booking? rescheduling;
 
   @override
   ConsumerState<TrainerSlotsScreen> createState() => _TrainerSlotsScreenState();
@@ -28,6 +42,8 @@ class TrainerSlotsScreen extends ConsumerStatefulWidget {
 class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
   late DateTime _selectedDay;
   late List<DateTime> _days;
+
+  bool get _isRescheduling => widget.rescheduling != null;
 
   @override
   void initState() {
@@ -62,6 +78,8 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
         return '';
     }
   }
+
+  // ── Normal booking flow ──────────────────────────────────────────────────────
 
   Future<void> _bookSlot(Slot slot, String trainerName) async {
     final l10n = AppLocalizations.of(context);
@@ -109,6 +127,54 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
     }
   }
 
+  // ── Reschedule flow (AS-039) ─────────────────────────────────────────────────
+
+  Future<void> _rescheduleSlot(Slot slot, String trainerName) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.rescheduleConfirmTitle),
+        content: Text(l10n.rescheduleConfirmBody(slot.start, trainerName)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.reschedule),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    final ok = await ref
+        .read(bookingControllerProvider.notifier)
+        .reschedule(oldBooking: widget.rescheduling!, newSlot: slot);
+
+    if (!mounted) return;
+
+    if (ok) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.rescheduled)));
+      if (Navigator.canPop(context)) Navigator.of(context).pop();
+    } else {
+      final err = ref.read(bookingControllerProvider).error;
+      final msg = err is SlotTakenException
+          ? l10n.slotTakenError
+          : err is PastSlotException
+              ? l10n.pastSlotError
+              : err is CutoffPassedException
+                  ? l10n.cutoffPassedError(kCancellationCutoffHours)
+                  : l10n.errorGeneric;
+      messenger.showSnackBar(SnackBar(content: Text(msg)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -145,9 +211,22 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Eyebrow(l10n.navSchedule),
+                    // Eyebrow changes to "RESCHEDULE" in reschedule mode (AS-039).
+                    Eyebrow(_isRescheduling ? l10n.reschedule : l10n.navSchedule),
                     const SizedBox(height: 8),
-                    DisplayTitle(trainerName.isEmpty ? '—' : trainerName),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: DisplayTitle(
+                              trainerName.isEmpty ? '—' : trainerName),
+                        ),
+                        if (_isRescheduling) ...[
+                          const SizedBox(width: 12),
+                          VoltBadge(l10n.reschedule, filled: false),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -248,7 +327,9 @@ class _TrainerSlotsScreenState extends ConsumerState<TrainerSlotsScreen> {
               index: i,
               child: _SlotBlock(
                 slot: slot,
-                onTap: () => _bookSlot(slot, trainerName),
+                onTap: () => _isRescheduling
+                    ? _rescheduleSlot(slot, trainerName)
+                    : _bookSlot(slot, trainerName),
               ),
             );
           }).toList(),
