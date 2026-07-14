@@ -90,6 +90,29 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ── M8: Packages / memberships ──────────────────────────────────────────
+
+    // M8: package/membership types (admin-defined).
+    match /packageTypes/{id} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // M8: a client's assigned package instances. Admins assign; any of the
+    // studio's trainers may adjust (credit refund on cancel can be triggered
+    // by a trainer cancelling a client's session) or the client's own booking
+    // flow decrements/increments their own package during transactions.
+    match /clientPackages/{id} {
+      allow read: if isSignedIn()
+        && (isSelf(resource.data.clientUid) || isAdmin()
+            || roleOf(request.auth.uid) == 'trainer');
+      allow create: if isAdmin();
+      allow update: if isAdmin()
+        || (isSignedIn() && resource.data.clientUid == request.auth.uid)
+        || (isSignedIn() && roleOf(request.auth.uid) == 'trainer');
+      allow delete: if isAdmin();
+    }
+
     // Everything else is denied until its own milestone adds explicit rules.
     match /{document=**} {
       allow read, write: if false;

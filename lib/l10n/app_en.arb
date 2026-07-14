@@ -156,5 +156,49 @@
     }
   },
   "rescheduled": "Session moved.",
-  "cancelSuccess": "Session cancelled."
+  "cancelSuccess": "Session cancelled.",
+  "packageTypesTitle": "Package Types",
+  "addPackageType": "Add Package Type",
+  "packageName": "Package name",
+  "packageKind": "Package kind",
+  "packageKindDuration": "Membership (duration)",
+  "packageKindCredits": "Sessions (credits)",
+  "validityDays": "Validity (days)",
+  "creditCount": "Number of sessions",
+  "assignPackage": "Assign Package",
+  "assignPackageTitle": "Assign Package",
+  "assignPackageBody": "Assign \"{package}\" to user {user}?",
+  "@assignPackageBody": {
+    "description": "Assign package confirmation dialog body text",
+    "placeholders": {
+      "package": {
+        "type": "String"
+      },
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "packageAssigned": "Package assigned.",
+  "myPackage": "My Package",
+  "noActivePackage": "You have no active package.",
+  "getPackagePrompt": "Contact the studio to get a package.",
+  "packageExpiry": "Expires",
+  "remainingCredits": "Remaining sessions",
+  "unlimitedUntil": "Unlimited until {date}",
+  "@unlimitedUntil": {
+    "description": "Duration-kind package label showing expiry date",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "packageHistory": "Package History",
+  "noPackageHistory": "No previous packages.",
+  "noPackageTypesYet": "No package types defined yet.",
+  "noActivePackageError": "You have no active package or your credits are depleted. Contact the studio.",
+  "statusActive": "Active",
+  "statusExpired": "Expired",
+  "statusDepleted": "Depleted"
 }

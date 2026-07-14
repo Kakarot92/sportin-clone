@@ -156,5 +156,49 @@
     }
   },
   "rescheduled": "Termin je pomeren.",
-  "cancelSuccess": "Termin je otkazan."
+  "cancelSuccess": "Termin je otkazan.",
+  "packageTypesTitle": "Tipovi paketa",
+  "addPackageType": "Dodaj tip paketa",
+  "packageName": "Naziv paketa",
+  "packageKind": "Vrsta paketa",
+  "packageKindDuration": "Članarina (period)",
+  "packageKindCredits": "Termini (krediti)",
+  "validityDays": "Trajanje (dana)",
+  "creditCount": "Broj termina",
+  "assignPackage": "Dodeli paket",
+  "assignPackageTitle": "Dodela paketa",
+  "assignPackageBody": "Dodeli \"{package}\" korisniku {user}?",
+  "@assignPackageBody": {
+    "description": "Tekst dijaloga za dodeljivanje paketa",
+    "placeholders": {
+      "package": {
+        "type": "String"
+      },
+      "user": {
+        "type": "String"
+      }
+    }
+  },
+  "packageAssigned": "Paket je dodeljen.",
+  "myPackage": "Moj paket",
+  "noActivePackage": "Nemaš aktivan paket.",
+  "getPackagePrompt": "Kontaktiraj studio da dobiješ paket.",
+  "packageExpiry": "Ističe",
+  "remainingCredits": "Preostalo termina",
+  "unlimitedUntil": "Neograničeno do {date}",
+  "@unlimitedUntil": {
+    "description": "Oznaka za paket tipa trajanje sa datumom isteka",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "packageHistory": "Istorija paketa",
+  "noPackageHistory": "Nema prethodnih paketa.",
+  "noPackageTypesYet": "Još nema definisanih tipova paketa.",
+  "noActivePackageError": "Nemaš aktivan paket ili su ti krediti potrošeni. Kontaktiraj studio.",
+  "statusActive": "Aktivan",
+  "statusExpired": "Istekao",
+  "statusDepleted": "Potrošen"
 }

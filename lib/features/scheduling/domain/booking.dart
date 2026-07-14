@@ -3,6 +3,7 @@
 /// Stored at `bookings/{autoId}` in Firestore.
 /// M4 uses bookings for the READ side only (filtering booked slots from
 /// availability). Booking creation is implemented in M5.
+/// M8 adds [packageId] to link the booking to the client's package.
 class Booking {
   const Booking({
     required this.id,
@@ -12,6 +13,7 @@ class Booking {
     required this.start,
     required this.end,
     required this.status,
+    this.packageId,
   });
 
   final String id;
@@ -30,6 +32,10 @@ class Booking {
   /// "booked" or "cancelled".
   final String status;
 
+  /// The [ClientPackage] id that covers this booking, or null for legacy
+  /// bookings created before M8 or package-less bookings.
+  final String? packageId;
+
   factory Booking.fromMap(String id, Map<String, dynamic> map) {
     return Booking(
       id: id,
@@ -39,6 +45,7 @@ class Booking {
       start: (map['start'] as String?) ?? '',
       end: (map['end'] as String?) ?? '',
       status: (map['status'] as String?) ?? 'booked',
+      packageId: map['packageId'] as String?,
     );
   }
 
@@ -49,6 +56,7 @@ class Booking {
         'start': start,
         'end': end,
         'status': status,
+        if (packageId != null) 'packageId': packageId,
       };
 
   /// Deterministic document ID for a booking slot.

@@ -20,6 +20,12 @@ class BookingNotFoundOrForbiddenException implements Exception {
   const BookingNotFoundOrForbiddenException();
 }
 
+/// Thrown when a client has no active package or has run out of credits and
+/// therefore cannot complete a booking (AS-032, AS-054).
+class NoActivePackageException implements Exception {
+  const NoActivePackageException();
+}
+
 /// Returns `true` if [slotStart] is strictly before [now].
 ///
 /// Extracted as a pure function so it can be unit-tested without Firebase.

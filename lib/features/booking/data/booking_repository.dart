@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../packages/domain/client_package.dart';
+import '../../packages/domain/package_type.dart';
 import '../../scheduling/domain/booking.dart';
 import '../../scheduling/domain/date_utils.dart';
 import '../domain/booking_exceptions.dart';
@@ -18,6 +20,27 @@ class BookingRepository {
 
   final FirebaseFirestore _db;
 
+  // ─── Private helpers ──────────────────────────────────────────────────────
+
+  /// Finds the currently active [ClientPackage] for [clientUid], or null.
+  ///
+  /// Fetches all of the client's packages and filters in Dart — acceptable
+  /// for the small number of packages a client typically accumulates (mirrors
+  /// the [watchClientHistory] pattern).
+  Future<ClientPackage?> _findActivePackage(String clientUid) async {
+    final snap = await _db
+        .collection('clientPackages')
+        .where('clientUid', isEqualTo: clientUid)
+        .get();
+    final active = snap.docs
+        .map((d) => ClientPackage.fromMap(d.id, d.data()))
+        .where((p) => p.isActive())
+        .toList();
+    if (active.isEmpty) return null;
+    active.sort((a, b) => b.expiryDate.compareTo(a.expiryDate));
+    return active.first;
+  }
+
   // ─── Booking creation ────────────────────────────────────────────────────
 
   /// Creates a booking for [clientUid] with [trainerUid] at [date]/[start].
@@ -25,10 +48,15 @@ class BookingRepository {
   /// Steps:
   /// 1. Guard: if [start] on [date] is before `DateTime.now()`, throws
   ///    [PastSlotException] (AS-029).
-  /// 2. Runs a Firestore transaction on the deterministic doc ID. If the slot
+  /// 2. Package gate: if the client has no active package, throws
+  ///    [NoActivePackageException] (AS-032, AS-054).
+  /// 3. Runs a Firestore transaction on the deterministic doc ID. If the slot
   ///    already has status `'booked'`, throws [SlotTakenException] (AS-028).
-  ///    Otherwise writes (or overwrites a cancelled doc) the booking document
-  ///    with `status: 'booked'` (AS-027).
+  ///    For credit-based packages: re-reads the package doc inside the
+  ///    transaction and verifies credits > 0 (throws [NoActivePackageException]
+  ///    if concurrently depleted), then decrements credits (AS-034).
+  ///    Writes (or overwrites a cancelled doc) the booking document with
+  ///    `status: 'booked'` and `packageId` set (AS-027).
   Future<void> createBooking({
     required String trainerUid,
     required String clientUid,
@@ -49,22 +77,52 @@ class BookingRepository {
       throw const PastSlotException();
     }
 
-    // ── 2. Transactional write ────────────────────────────────────────────
+    // ── 2. Package gate (pre-transaction) ────────────────────────────────
+    final activePackage = await _findActivePackage(clientUid);
+    if (activePackage == null) {
+      throw const NoActivePackageException();
+    }
+
+    // ── 3. Transactional write ────────────────────────────────────────────
     final docId = Booking.bookingDocId(trainerUid, ymd(date), start);
-    final ref = _db.collection('bookings').doc(docId);
+    final bookingRef = _db.collection('bookings').doc(docId);
 
     await _db.runTransaction((tx) async {
-      final snap = await tx.get(ref);
+      // ── All reads first ──────────────────────────────────────────────
+      final snap = await tx.get(bookingRef);
+
+      DocumentSnapshot<Map<String, dynamic>>? packageSnap;
+      DocumentReference<Map<String, dynamic>>? packageRef;
+      if (activePackage.kind == PackageKind.credits) {
+        packageRef =
+            _db.collection('clientPackages').doc(activePackage.id);
+        packageSnap = await tx.get(packageRef);
+      }
+
+      // ── Checks (may throw to abort transaction) ──────────────────────
       if (snap.exists && (snap.data()!['status'] as String?) == 'booked') {
         throw const SlotTakenException();
       }
-      tx.set(ref, {
+
+      if (activePackage.kind == PackageKind.credits) {
+        final credits =
+            (packageSnap?.data()?['remainingCredits'] as int?) ?? 0;
+        if (packageSnap == null || !packageSnap.exists || credits <= 0) {
+          throw const NoActivePackageException();
+        }
+        // ── Write: decrement credits ────────────────────────────────
+        tx.update(packageRef!, {'remainingCredits': FieldValue.increment(-1)});
+      }
+
+      // ── Write: create booking ────────────────────────────────────
+      tx.set(bookingRef, {
         'trainerUid': trainerUid,
         'clientUid': clientUid,
         'date': ymd(date),
         'start': start,
         'end': end,
         'status': 'booked',
+        'packageId': activePackage.id,
         'createdAt': FieldValue.serverTimestamp(),
       });
     });
@@ -136,6 +194,9 @@ class BookingRepository {
   /// Throws [CutoffPassedException] if the session has already started or
   /// is in the past (`kCancellationCutoffHours = 0`; AS-036).
   ///
+  /// For credit-based bookings with a valid [Booking.packageId], refunds one
+  /// credit back to the client's package (AS-037).
+  ///
   /// Setting status to `'cancelled'` automatically frees the slot because
   /// [AvailabilityRepository.watchBookingsForDay] filters on
   /// `status == 'booked'` (AS-038).
@@ -144,14 +205,44 @@ class BookingRepository {
     if (isPastCutoff(slotStart, DateTime.now())) {
       throw const CutoffPassedException();
     }
-    await _db
-        .collection('bookings')
-        .doc(booking.id)
-        .update({'status': 'cancelled'});
+
+    final bookingRef = _db.collection('bookings').doc(booking.id);
+
+    await _db.runTransaction((tx) async {
+      // ── All reads first ──────────────────────────────────────────────
+      await tx.get(bookingRef);
+
+      DocumentSnapshot<Map<String, dynamic>>? packageSnap;
+      DocumentReference<Map<String, dynamic>>? packageRef;
+      if (booking.packageId != null) {
+        packageRef =
+            _db.collection('clientPackages').doc(booking.packageId);
+        packageSnap = await tx.get(packageRef);
+      }
+
+      // ── Writes ──────────────────────────────────────────────────────
+      tx.update(bookingRef, {'status': 'cancelled'});
+
+      // Refund one credit for credit-based bookings (AS-037).
+      if (packageSnap != null &&
+          packageRef != null &&
+          packageSnap.exists) {
+        final kindStr = packageSnap.data()!['kind'] as String?;
+        if (kindStr == 'credits') {
+          tx.update(
+            packageRef,
+            {'remainingCredits': FieldValue.increment(1)},
+          );
+        }
+      }
+    });
   }
 
   /// Atomically cancels [oldBooking] and books the new slot described by
   /// [newTrainerUid] / [newDate] / [newStart] / [newEnd] (AS-039).
+  ///
+  /// The [oldBooking.packageId] is carried forward to the new booking —
+  /// rescheduling does not consume an additional credit or free one up.
   ///
   /// Throws:
   /// - [CutoffPassedException] if the OLD slot's cutoff has passed.
@@ -196,6 +287,7 @@ class BookingRepository {
         'start': newStart,
         'end': newEnd,
         'status': 'booked',
+        if (oldBooking.packageId != null) 'packageId': oldBooking.packageId,
         'createdAt': FieldValue.serverTimestamp(),
       });
     });

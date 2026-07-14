@@ -841,6 +841,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Session cancelled.'**
   String get cancelSuccess;
+
+  /// No description provided for @packageTypesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Package Types'**
+  String get packageTypesTitle;
+
+  /// No description provided for @addPackageType.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Package Type'**
+  String get addPackageType;
+
+  /// No description provided for @packageName.
+  ///
+  /// In en, this message translates to:
+  /// **'Package name'**
+  String get packageName;
+
+  /// No description provided for @packageKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Package kind'**
+  String get packageKind;
+
+  /// No description provided for @packageKindDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership (duration)'**
+  String get packageKindDuration;
+
+  /// No description provided for @packageKindCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions (credits)'**
+  String get packageKindCredits;
+
+  /// No description provided for @validityDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Validity (days)'**
+  String get validityDays;
+
+  /// No description provided for @creditCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of sessions'**
+  String get creditCount;
+
+  /// No description provided for @assignPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Package'**
+  String get assignPackage;
+
+  /// No description provided for @assignPackageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Package'**
+  String get assignPackageTitle;
+
+  /// Assign package confirmation dialog body text
+  ///
+  /// In en, this message translates to:
+  /// **'Assign \"{package}\" to user {user}?'**
+  String assignPackageBody(String package, String user);
+
+  /// No description provided for @packageAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Package assigned.'**
+  String get packageAssigned;
+
+  /// No description provided for @myPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'My Package'**
+  String get myPackage;
+
+  /// No description provided for @noActivePackage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no active package.'**
+  String get noActivePackage;
+
+  /// No description provided for @getPackagePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact the studio to get a package.'**
+  String get getPackagePrompt;
+
+  /// No description provided for @packageExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires'**
+  String get packageExpiry;
+
+  /// No description provided for @remainingCredits.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining sessions'**
+  String get remainingCredits;
+
+  /// Duration-kind package label showing expiry date
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited until {date}'**
+  String unlimitedUntil(String date);
+
+  /// No description provided for @packageHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Package History'**
+  String get packageHistory;
+
+  /// No description provided for @noPackageHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No previous packages.'**
+  String get noPackageHistory;
+
+  /// No description provided for @noPackageTypesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No package types defined yet.'**
+  String get noPackageTypesYet;
+
+  /// No description provided for @noActivePackageError.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no active package or your credits are depleted. Contact the studio.'**
+  String get noActivePackageError;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get statusActive;
+
+  /// No description provided for @statusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get statusExpired;
+
+  /// No description provided for @statusDepleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Depleted'**
+  String get statusDepleted;
 }
 
 class _AppLocalizationsDelegate

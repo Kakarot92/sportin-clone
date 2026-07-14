@@ -394,4 +394,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancelSuccess => 'Session cancelled.';
+
+  @override
+  String get packageTypesTitle => 'Package Types';
+
+  @override
+  String get addPackageType => 'Add Package Type';
+
+  @override
+  String get packageName => 'Package name';
+
+  @override
+  String get packageKind => 'Package kind';
+
+  @override
+  String get packageKindDuration => 'Membership (duration)';
+
+  @override
+  String get packageKindCredits => 'Sessions (credits)';
+
+  @override
+  String get validityDays => 'Validity (days)';
+
+  @override
+  String get creditCount => 'Number of sessions';
+
+  @override
+  String get assignPackage => 'Assign Package';
+
+  @override
+  String get assignPackageTitle => 'Assign Package';
+
+  @override
+  String assignPackageBody(String package, String user) {
+    return 'Assign \"$package\" to user $user?';
+  }
+
+  @override
+  String get packageAssigned => 'Package assigned.';
+
+  @override
+  String get myPackage => 'My Package';
+
+  @override
+  String get noActivePackage => 'You have no active package.';
+
+  @override
+  String get getPackagePrompt => 'Contact the studio to get a package.';
+
+  @override
+  String get packageExpiry => 'Expires';
+
+  @override
+  String get remainingCredits => 'Remaining sessions';
+
+  @override
+  String unlimitedUntil(String date) {
+    return 'Unlimited until $date';
+  }
+
+  @override
+  String get packageHistory => 'Package History';
+
+  @override
+  String get noPackageHistory => 'No previous packages.';
+
+  @override
+  String get noPackageTypesYet => 'No package types defined yet.';
+
+  @override
+  String get noActivePackageError =>
+      'You have no active package or your credits are depleted. Contact the studio.';
+
+  @override
+  String get statusActive => 'Active';
+
+  @override
+  String get statusExpired => 'Expired';
+
+  @override
+  String get statusDepleted => 'Depleted';
 }

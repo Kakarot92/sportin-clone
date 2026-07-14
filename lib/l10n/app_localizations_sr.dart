@@ -393,4 +393,84 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get cancelSuccess => 'Termin je otkazan.';
+
+  @override
+  String get packageTypesTitle => 'Tipovi paketa';
+
+  @override
+  String get addPackageType => 'Dodaj tip paketa';
+
+  @override
+  String get packageName => 'Naziv paketa';
+
+  @override
+  String get packageKind => 'Vrsta paketa';
+
+  @override
+  String get packageKindDuration => 'Članarina (period)';
+
+  @override
+  String get packageKindCredits => 'Termini (krediti)';
+
+  @override
+  String get validityDays => 'Trajanje (dana)';
+
+  @override
+  String get creditCount => 'Broj termina';
+
+  @override
+  String get assignPackage => 'Dodeli paket';
+
+  @override
+  String get assignPackageTitle => 'Dodela paketa';
+
+  @override
+  String assignPackageBody(String package, String user) {
+    return 'Dodeli \"$package\" korisniku $user?';
+  }
+
+  @override
+  String get packageAssigned => 'Paket je dodeljen.';
+
+  @override
+  String get myPackage => 'Moj paket';
+
+  @override
+  String get noActivePackage => 'Nemaš aktivan paket.';
+
+  @override
+  String get getPackagePrompt => 'Kontaktiraj studio da dobiješ paket.';
+
+  @override
+  String get packageExpiry => 'Ističe';
+
+  @override
+  String get remainingCredits => 'Preostalo termina';
+
+  @override
+  String unlimitedUntil(String date) {
+    return 'Neograničeno do $date';
+  }
+
+  @override
+  String get packageHistory => 'Istorija paketa';
+
+  @override
+  String get noPackageHistory => 'Nema prethodnih paketa.';
+
+  @override
+  String get noPackageTypesYet => 'Još nema definisanih tipova paketa.';
+
+  @override
+  String get noActivePackageError =>
+      'Nemaš aktivan paket ili su ti krediti potrošeni. Kontaktiraj studio.';
+
+  @override
+  String get statusActive => 'Aktivan';
+
+  @override
+  String get statusExpired => 'Istekao';
+
+  @override
+  String get statusDepleted => 'Potrošen';
 }
