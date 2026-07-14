@@ -608,4 +608,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myChats => 'My chats';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterClients => 'Clients';
+
+  @override
+  String get trainerClientRelationships => 'Trainer–client relationships';
+
+  @override
+  String get studioSettingsHub => 'Studio settings';
+
+  @override
+  String get bookingReports => 'Booking reports';
+
+  @override
+  String get noRelationshipsYet => 'No relationships recorded yet.';
+
+  @override
+  String get revenueReportsComingSoon =>
+      'Revenue reports will be available once payment is added.';
+
+  @override
+  String get totalBookings => 'Total bookings';
+
+  @override
+  String get bookedCount => 'Active bookings';
+
+  @override
+  String get cancelledCount => 'Cancelled';
+
+  @override
+  String get byTrainer => 'By trainer';
 }

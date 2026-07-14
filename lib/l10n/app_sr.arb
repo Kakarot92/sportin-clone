@@ -252,5 +252,16 @@
   "chatWithTrainer": "Ćaskanje sa trenerom",
   "groupClassChat": "Grupni čas — ćaskanje",
   "noChatsYet": "Još nema razgovora.",
-  "myChats": "Moji razgovori"
+  "myChats": "Moji razgovori",
+  "filterAll": "Svi",
+  "filterClients": "Klijenti",
+  "trainerClientRelationships": "Trener–klijent odnosi",
+  "studioSettingsHub": "Podešavanja studija",
+  "bookingReports": "Izveštaj o terminima",
+  "noRelationshipsYet": "Još nema evidentiranih odnosa.",
+  "revenueReportsComingSoon": "Izveštaji o prihodima biće dostupni kada se doda plaćanje.",
+  "totalBookings": "Ukupno termina",
+  "bookedCount": "Aktivnih termina",
+  "cancelledCount": "Otkazanih",
+  "byTrainer": "Po treneru"
 }

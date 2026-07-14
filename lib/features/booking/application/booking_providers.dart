@@ -48,6 +48,13 @@ final trainerSessionsProvider =
       .watchTrainerSessions(trainerUid);
 });
 
+/// Admin-only: watches all bookings across the studio (most recent first,
+/// capped at 200 documents). Single-field orderBy — no composite index needed
+/// (AS-088).
+final allBookingsProvider = StreamProvider<List<Booking>>((ref) {
+  return ref.watch(bookingRepositoryProvider).watchAllBookings();
+});
+
 // ─── Controller ──────────────────────────────────────────────────────────────
 
 /// Handles booking creation with loading / error state.

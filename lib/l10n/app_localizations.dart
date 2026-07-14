@@ -1255,6 +1255,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'My chats'**
   String get myChats;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @filterClients.
+  ///
+  /// In en, this message translates to:
+  /// **'Clients'**
+  String get filterClients;
+
+  /// No description provided for @trainerClientRelationships.
+  ///
+  /// In en, this message translates to:
+  /// **'Trainer–client relationships'**
+  String get trainerClientRelationships;
+
+  /// No description provided for @studioSettingsHub.
+  ///
+  /// In en, this message translates to:
+  /// **'Studio settings'**
+  String get studioSettingsHub;
+
+  /// No description provided for @bookingReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking reports'**
+  String get bookingReports;
+
+  /// No description provided for @noRelationshipsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No relationships recorded yet.'**
+  String get noRelationshipsYet;
+
+  /// No description provided for @revenueReportsComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue reports will be available once payment is added.'**
+  String get revenueReportsComingSoon;
+
+  /// No description provided for @totalBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'Total bookings'**
+  String get totalBookings;
+
+  /// No description provided for @bookedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Active bookings'**
+  String get bookedCount;
+
+  /// No description provided for @cancelledCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get cancelledCount;
+
+  /// No description provided for @byTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'By trainer'**
+  String get byTrainer;
 }
 
 class _AppLocalizationsDelegate

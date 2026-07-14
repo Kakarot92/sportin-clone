@@ -10,11 +10,19 @@ import 'package:sportin_clone/l10n/app_localizations.dart';
 
 import '../application/admin_providers.dart';
 
-class AdminUsersScreen extends ConsumerWidget {
+class AdminUsersScreen extends ConsumerStatefulWidget {
   const AdminUsersScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AdminUsersScreen> createState() => _AdminUsersScreenState();
+}
+
+class _AdminUsersScreenState extends ConsumerState<AdminUsersScreen> {
+  // Filter: 'all', 'clients', 'trainers'
+  String _filter = 'all';
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final me = ref.watch(appUserProvider).asData?.value;
 
@@ -31,25 +39,56 @@ class AdminUsersScreen extends ConsumerWidget {
       body: usersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(l10n.errorGeneric)),
-        data: (users) => ListView.separated(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          itemCount: users.length + 1,
-          separatorBuilder: (_, i) =>
-              SizedBox(height: i == 0 ? 24 : 12),
-          itemBuilder: (context, i) {
-            if (i == 0) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Eyebrow('Admin'),
-                  const SizedBox(height: 10),
-                  DisplayTitle(l10n.usersTitle),
-                ],
-              );
-            }
-            return _UserRow(user: users[i - 1], me: me);
-          },
-        ),
+        data: (users) {
+          // Apply role filter.
+          final filtered = switch (_filter) {
+            'clients' => users.where((u) => u.isClient).toList(),
+            'trainers' => users.where((u) => u.isTrainer).toList(),
+            _ => users, // 'all' — includes admins
+          };
+
+          return ListView.separated(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+            itemCount: filtered.length + 1,
+            separatorBuilder: (_, i) =>
+                SizedBox(height: i == 0 ? 16 : 12),
+            itemBuilder: (context, i) {
+              if (i == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Eyebrow('Admin'),
+                    const SizedBox(height: 10),
+                    DisplayTitle(l10n.usersTitle),
+                    const SizedBox(height: 20),
+                    // ── Role filter ──────────────────────────────────────
+                    SegmentedButton<String>(
+                      segments: [
+                        ButtonSegment(
+                          value: 'all',
+                          label: Text(l10n.filterAll),
+                        ),
+                        ButtonSegment(
+                          value: 'clients',
+                          label: Text(l10n.filterClients),
+                        ),
+                        ButtonSegment(
+                          value: 'trainers',
+                          label: Text(l10n.roleTrainer),
+                        ),
+                      ],
+                      selected: {_filter},
+                      onSelectionChanged: (s) =>
+                          setState(() => _filter = s.first),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                );
+              }
+              return _UserRow(user: filtered[i - 1], me: me);
+            },
+          );
+        },
       ),
     );
   }

@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:sportin_clone/l10n/app_localizations.dart';
 
 import '../features/admin/presentation/admin_users_screen.dart';
+import '../features/admin/presentation/booking_reports_screen.dart';
+import '../features/admin/presentation/studio_settings_hub_screen.dart';
+import '../features/admin/presentation/trainer_relationships_screen.dart';
 import '../features/auth/application/auth_providers.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/reset_password_screen.dart';
@@ -232,6 +235,27 @@ final routerProvider = Provider<GoRouter>((ref) {
                   pageBuilder: (context, state) => _kineticPage(
                     state.pageKey,
                     const TrainerGroupClassesScreen(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'admin-relationships',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const TrainerRelationshipsScreen(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'admin-settings',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const StudioSettingsHubScreen(),
+                  ),
+                ),
+                GoRoute(
+                  path: 'admin-reports',
+                  pageBuilder: (context, state) => _kineticPage(
+                    state.pageKey,
+                    const BookingReportsScreen(),
                   ),
                 ),
                 GoRoute(

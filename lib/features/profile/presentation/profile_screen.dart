@@ -104,6 +104,30 @@ class ProfileScreen extends ConsumerWidget {
                 Reveal(
                   index: ri++,
                   child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/admin-relationships'),
+                    icon: const Icon(Icons.people_alt_outlined),
+                    label: Text(l10n.trainerClientRelationships),
+                  ),
+                ),
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/admin-settings'),
+                    icon: const Icon(Icons.settings_outlined),
+                    label: Text(l10n.studioSettingsHub),
+                  ),
+                ),
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
+                    onPressed: () => context.push('/profile/admin-reports'),
+                    icon: const Icon(Icons.bar_chart_outlined),
+                    label: Text(l10n.bookingReports),
+                  ),
+                ),
+                Reveal(
+                  index: ri++,
+                  child: OutlinedButton.icon(
                     onPressed: () => context.push('/profile/studio'),
                     icon: const Icon(Icons.store_outlined),
                     label: Text(l10n.studioClosedDays),

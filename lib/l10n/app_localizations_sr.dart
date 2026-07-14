@@ -607,4 +607,38 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get myChats => 'Moji razgovori';
+
+  @override
+  String get filterAll => 'Svi';
+
+  @override
+  String get filterClients => 'Klijenti';
+
+  @override
+  String get trainerClientRelationships => 'Trener–klijent odnosi';
+
+  @override
+  String get studioSettingsHub => 'Podešavanja studija';
+
+  @override
+  String get bookingReports => 'Izveštaj o terminima';
+
+  @override
+  String get noRelationshipsYet => 'Još nema evidentiranih odnosa.';
+
+  @override
+  String get revenueReportsComingSoon =>
+      'Izveštaji o prihodima biće dostupni kada se doda plaćanje.';
+
+  @override
+  String get totalBookings => 'Ukupno termina';
+
+  @override
+  String get bookedCount => 'Aktivnih termina';
+
+  @override
+  String get cancelledCount => 'Otkazanih';
+
+  @override
+  String get byTrainer => 'Po treneru';
 }

@@ -221,6 +221,20 @@ class BookingRepository {
             snap.docs.map((d) => Booking.fromMap(d.id, d.data())).toList());
   }
 
+  /// Admin-only: watches all bookings across the studio, newest first.
+  ///
+  /// Single-field `orderBy('date', descending: true)` uses Firestore's
+  /// auto-created index — no composite index needed (AS-088).
+  Stream<List<Booking>> watchAllBookings({int limit = 200}) {
+    return _db
+        .collection('bookings')
+        .orderBy('date', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map((snap) =>
+            snap.docs.map((d) => Booking.fromMap(d.id, d.data())).toList());
+  }
+
   // ─── Cancellation & reschedule (AS-035, AS-036, AS-038, AS-039, AS-040) ──
 
   /// Cancels [booking] by setting its status to `'cancelled'`.

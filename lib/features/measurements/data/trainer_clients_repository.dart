@@ -32,6 +32,20 @@ class TrainerClientsRepository {
             .toList());
   }
 
+  /// Watches ALL trainer-client relationships across the studio, newest first.
+  ///
+  /// Admin-only usage (AS-087). No `where` clause — single-field `orderBy`
+  /// uses Firestore's auto-created index so no composite index is needed.
+  Stream<List<TrainerClientRef>> watchAllRelationships() {
+    return _db
+        .collection('trainerClients')
+        .orderBy('firstBookedAt', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((d) => TrainerClientRef.fromMap(d.data()))
+            .toList());
+  }
+
   // ─── Reads ────────────────────────────────────────────────────────────────
 
   /// Returns `true` if [trainerUid] has a `trainerClients` marker for

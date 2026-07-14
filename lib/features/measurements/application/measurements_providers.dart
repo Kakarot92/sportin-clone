@@ -45,6 +45,17 @@ final myClientsProvider =
       .watchMyClients(trainerUid);
 });
 
+/// Admin-only: watches ALL trainer-client relationships across the studio.
+///
+/// No `where` clause — single-field `orderBy` uses the auto-created index,
+/// no composite index required (AS-087).
+final allTrainerClientRelationshipsProvider =
+    StreamProvider<List<TrainerClientRef>>((ref) {
+  return ref
+      .watch(trainerClientsRepositoryProvider)
+      .watchAllRelationships();
+});
+
 // ─── Dashboard summary provider ───────────────────────────────────────────────
 
 /// Combines booking history, active package, and latest measurement into a

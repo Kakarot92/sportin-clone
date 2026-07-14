@@ -252,5 +252,16 @@
   "chatWithTrainer": "Chat with trainer",
   "groupClassChat": "Group class — chat",
   "noChatsYet": "No conversations yet.",
-  "myChats": "My chats"
+  "myChats": "My chats",
+  "filterAll": "All",
+  "filterClients": "Clients",
+  "trainerClientRelationships": "Trainer–client relationships",
+  "studioSettingsHub": "Studio settings",
+  "bookingReports": "Booking reports",
+  "noRelationshipsYet": "No relationships recorded yet.",
+  "revenueReportsComingSoon": "Revenue reports will be available once payment is added.",
+  "totalBookings": "Total bookings",
+  "bookedCount": "Active bookings",
+  "cancelledCount": "Cancelled",
+  "byTrainer": "By trainer"
 }
