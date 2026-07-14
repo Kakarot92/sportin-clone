@@ -1213,6 +1213,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No package'**
   String get noPackage;
+
+  /// No description provided for @chatMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get chatMessages;
+
+  /// No description provided for @typeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a message…'**
+  String get typeMessage;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @noMessagesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No messages yet. Say hello!'**
+  String get noMessagesYet;
+
+  /// No description provided for @chatWithTrainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat with trainer'**
+  String get chatWithTrainer;
+
+  /// No description provided for @groupClassChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Group class — chat'**
+  String get groupClassChat;
+
+  /// No description provided for @noChatsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No conversations yet.'**
+  String get noChatsYet;
+
+  /// No description provided for @myChats.
+  ///
+  /// In en, this message translates to:
+  /// **'My chats'**
+  String get myChats;
 }
 
 class _AppLocalizationsDelegate

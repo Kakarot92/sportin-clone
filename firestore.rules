@@ -163,6 +163,52 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ── M11: Chat ───────────────────────────────────────────────────────────
+
+    // M11: 1-on-1 chat between a client and a trainer. Thread ID is
+    // deterministic ("{trainerUid}_{clientUid}"), matching the same convention
+    // used for bookings and the trainerClients marker elsewhere in this app.
+    match /chats/{threadId} {
+      allow read: if isSignedIn()
+        && (isSelf(resource.data.trainerUid) || isSelf(resource.data.clientUid) || isAdmin());
+      allow create, update: if isSignedIn()
+        && (request.resource.data.trainerUid == request.auth.uid
+            || request.resource.data.clientUid == request.auth.uid);
+
+      match /messages/{msgId} {
+        allow read: if isSignedIn()
+          && (get(/databases/$(database)/documents/chats/$(threadId)).data.trainerUid == request.auth.uid
+              || get(/databases/$(database)/documents/chats/$(threadId)).data.clientUid == request.auth.uid
+              || isAdmin());
+        allow create: if isSignedIn()
+          && request.resource.data.senderUid == request.auth.uid
+          && (get(/databases/$(database)/documents/chats/$(threadId)).data.trainerUid == request.auth.uid
+              || get(/databases/$(database)/documents/chats/$(threadId)).data.clientUid == request.auth.uid);
+      }
+    }
+
+    // M11: group class chat, visible only to that class's trainer and its
+    // joined participants (reuses the groupClasses/{classId}/participants
+    // subcollection from M7 — no separate participant list to maintain).
+    match /groupClassChats/{classId} {
+      allow read: if isSignedIn()
+        && (get(/databases/$(database)/documents/groupClasses/$(classId)).data.trainerUid == request.auth.uid
+            || exists(/databases/$(database)/documents/groupClasses/$(classId)/participants/$(request.auth.uid))
+            || isAdmin());
+      allow create, update: if isSignedIn();
+
+      match /messages/{msgId} {
+        allow read: if isSignedIn()
+          && (get(/databases/$(database)/documents/groupClasses/$(classId)).data.trainerUid == request.auth.uid
+              || exists(/databases/$(database)/documents/groupClasses/$(classId)/participants/$(request.auth.uid))
+              || isAdmin());
+        allow create: if isSignedIn()
+          && request.resource.data.senderUid == request.auth.uid
+          && (get(/databases/$(database)/documents/groupClasses/$(classId)).data.trainerUid == request.auth.uid
+              || exists(/databases/$(database)/documents/groupClasses/$(classId)/participants/$(request.auth.uid)));
+      }
+    }
+
     // Everything else is denied until its own milestone adds explicit rules.
     match /{document=**} {
       allow read, write: if false;

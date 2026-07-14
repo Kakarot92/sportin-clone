@@ -245,5 +245,13 @@
   "dashboardSessionsAttended": "Sessions attended",
   "dashboardCurrentPackage": "Current package",
   "dashboardLatestMeasurement": "Latest measurement",
-  "noPackage": "No package"
+  "noPackage": "No package",
+  "chatMessages": "Messages",
+  "typeMessage": "Type a message…",
+  "send": "Send",
+  "noMessagesYet": "No messages yet. Say hello!",
+  "chatWithTrainer": "Chat with trainer",
+  "groupClassChat": "Group class — chat",
+  "noChatsYet": "No conversations yet.",
+  "myChats": "My chats"
 }

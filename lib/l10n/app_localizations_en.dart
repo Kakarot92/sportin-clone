@@ -587,4 +587,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noPackage => 'No package';
+
+  @override
+  String get chatMessages => 'Messages';
+
+  @override
+  String get typeMessage => 'Type a message…';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get noMessagesYet => 'No messages yet. Say hello!';
+
+  @override
+  String get chatWithTrainer => 'Chat with trainer';
+
+  @override
+  String get groupClassChat => 'Group class — chat';
+
+  @override
+  String get noChatsYet => 'No conversations yet.';
+
+  @override
+  String get myChats => 'My chats';
 }

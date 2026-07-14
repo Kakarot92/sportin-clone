@@ -245,5 +245,13 @@
   "dashboardSessionsAttended": "Odrađeno treninga",
   "dashboardCurrentPackage": "Trenutni paket",
   "dashboardLatestMeasurement": "Poslednja mera",
-  "noPackage": "Nema paketa"
+  "noPackage": "Nema paketa",
+  "chatMessages": "Poruke",
+  "typeMessage": "Napiši poruku…",
+  "send": "Pošalji",
+  "noMessagesYet": "Još nema poruka. Napiši prvu!",
+  "chatWithTrainer": "Ćaskanje sa trenerom",
+  "groupClassChat": "Grupni čas — ćaskanje",
+  "noChatsYet": "Još nema razgovora.",
+  "myChats": "Moji razgovori"
 }

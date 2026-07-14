@@ -586,4 +586,28 @@ class AppLocalizationsSr extends AppLocalizations {
 
   @override
   String get noPackage => 'Nema paketa';
+
+  @override
+  String get chatMessages => 'Poruke';
+
+  @override
+  String get typeMessage => 'Napiši poruku…';
+
+  @override
+  String get send => 'Pošalji';
+
+  @override
+  String get noMessagesYet => 'Još nema poruka. Napiši prvu!';
+
+  @override
+  String get chatWithTrainer => 'Ćaskanje sa trenerom';
+
+  @override
+  String get groupClassChat => 'Grupni čas — ćaskanje';
+
+  @override
+  String get noChatsYet => 'Još nema razgovora.';
+
+  @override
+  String get myChats => 'Moji razgovori';
 }
