@@ -2,6 +2,39 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-15 — M13 Admin panel — CORE COMPLETE (revenue reports deferred)
+
+Single worker (almost entirely read-only aggregation over existing
+collections, no new transactional logic):
+
+- Enhanced `admin_users_screen.dart` with a Svi/Klijenti/Treneri filter
+  (AS-085, AS-086) — kept every existing action (trainer-role toggle,
+  assign-package) unchanged.
+- New `trainer_relationships_screen.dart` (AS-087) — reads the `trainerClients`
+  marker (introduced in M12) admin-wide via one new additive repository
+  method (`watchAllRelationships`, no `where`, single-field orderBy, no new
+  index needed), grouped by trainer.
+- New `booking_reports_screen.dart` (AS-088) — reads `bookings` admin-wide via
+  one new additive method (`watchAllBookings`, same no-index-needed shape):
+  total/booked/cancelled counts + per-trainer breakdown.
+- New `studio_settings_hub_screen.dart` (AS-090) — a navigation hub linking
+  the two settings screens that already existed (Neradni dani, Tipovi
+  paketa). Cancellation cutoff stays a fixed code constant, NOT exposed as an
+  editable admin setting — consistent with the earlier "any time before it
+  starts" product decision; making it admin-configurable now would partially
+  contradict that.
+- Routes `/profile/admin-relationships`, `/profile/admin-settings`,
+  `/profile/admin-reports` — all admin-gated, all with `appBar: AppBar()`.
+
+**DEFERRED: AS-089 (revenue/payment reports)** — no payment provider exists
+(`PackageType` doesn't even have a price field). Rather than fabricate
+numbers, the reports screen shows an honest "available once payments are
+added" note instead of a chart.
+
+Gate: `dart analyze lib test` clean; `flutter test` **188/188** pass. Commit
+554e8ea (F120). No firestore.rules/indexes changes — both new queries are
+single-field orderBy, no composite index required.
+
 ## 2026-07-15 — M11 Chat — CORE COMPLETE (media attachments deferred)
 
 Scoped to F100, F101, F103 (text-only). Skipped **F102** (image/video
