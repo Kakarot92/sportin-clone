@@ -2,6 +2,45 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-15 — M12 Measurements & progress — CORE COMPLETE (progress photos deferred)
+
+Scoped to F110, F111, F113, F114, F115 (no photos/Storage). Skipped **F112**
+(progress photos + consent + Storage privacy rules — AS-058, AS-059, AS-060)
+— deferred, same pattern as payments (M8) and notifications (M6): infra-heavy
+sub-feature kept out of the core pass. Two serial workers:
+
+- **Worker A (logic, F110)** — `lib/features/measurements/` (`MeasurementEntry`
+  model — all fields but date/clientUid nullable, since a client may log only
+  some metrics per entry; `MeasurementsRepository` CRUD;
+  `TrainerClientsRepository` + a NEW `trainerClients/{trainerUid}_{clientUid}`
+  marker collection). The app had no prior concept of "a trainer's clients" —
+  invented the lightweight marker because Firestore security rules can't run
+  arbitrary WHERE queries, only `exists()`/`get()` on a known path. Hooked the
+  marker upsert into `BookingRepository.createBooking`'s existing transaction
+  (purely additive — one pre-read of the client's displayName, one extra
+  `tx.set(..., merge:true)`). `dashboardSummaryProvider` combines booking
+  history + active package + latest measurement for AS-065 (interpreted
+  "sessions attended" as past bookings with status=='booked', since the app
+  has no explicit attendance/no-show tracking — closest available proxy).
+  Firestore rules added for `measurements`/`trainerClients` — **first deploy
+  attempt failed validation** (`$(a)_$(b)` is not valid path-interpolation
+  syntax; fixed to a single `$(a + '_' + b)` expression, re-validated,
+  deployed). Two composite indexes added proactively. `test/measurements_test.dart`.
+- **Worker B (UI, F113)** — replaced the `measurements_screen.dart` placeholder
+  with a real screen: `fl_chart` weight-over-time line chart (Kinetik-dark
+  styled), inline add/edit entry form (all fields optional), history list with
+  edit/delete. New `my_clients_screen.dart` (trainer's client roster, derived
+  from the `trainerClients` marker) + `client_measurements_screen.dart`
+  (read-only view — trainers can never write measurements, AS-063/AS-064).
+  Added a compact 3-tile dashboard summary section to `home_screen.dart`
+  (sessions attended / current package / latest weight) without touching any
+  existing home content. This worker was interrupted mid-task by a session
+  limit after already committing the real work — only a handoff-file commit
+  was left pending, completed by the orchestrator.
+
+Gate: `dart analyze lib test` clean; `flutter test` **143/143** pass. Commits
+735d98f (F110) + 5e8eb59 (rules syntax fix) + 94f9daf (F113).
+
 ## 2026-07-14 — M7 Group classes — COMPLETE
 
 Two serial workers:
