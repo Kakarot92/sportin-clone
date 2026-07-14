@@ -2,6 +2,54 @@
 
 _Orchestrator progress log. Newest first._
 
+## 2026-07-14 — M8 Packages/memberships — CORE COMPLETE (payment provider deferred), closes M5/M6 credit-gate deferrals
+
+Scoped to F070–F073 (manual assignment only); skipped F074–F077 (card
+payment integration) — payments were already an explicit product decision to
+defer (see [[sportin-clone-mission-decisions]]). Two serial workers:
+
+- **Worker A (logic, F070)** — `lib/features/packages/` (`PackageType`,
+  `ClientPackage` with computed `isActive()` — no stored status field, always
+  consistent), `PackagesRepository` (types CRUD, `assignPackage`,
+  `getActivePackage`), providers. `Booking` gained a nullable `packageId`
+  (backward-compatible — existing bookings/tests unaffected). Wired the gate
+  directly into `BookingRepository`: `createBooking` now looks up the
+  client's active package before opening its transaction, throws
+  `NoActivePackageException` if none (AS-032, AS-054); for credit-kind
+  packages, decrements `remainingCredits` atomically inside the same
+  transaction that creates the booking (re-verifies >0 to guard concurrent
+  double-spend) (AS-034). `cancelBooking` now runs as a transaction that
+  refunds the credit when the cancelled booking's package is credit-kind
+  (AS-037) — duration-kind packages need no refund (nothing was consumed).
+  `rescheduleBooking` carries `packageId` forward without re-consuming or
+  refunding (moving ≠ new session). Firestore rules added for
+  `packageTypes`/`clientPackages` (validated + **deployed**); two new
+  composite indexes added for the `clientUid+assignedAt` and `active+name`
+  queries (learned from the M4 index-forgetting incident — added proactively
+  this time, confirmed READY same day). `test/packages_test.dart`: isActive()
+  boundary cases + model round-trips.
+- **Worker B (UI, F071)** — `lib/features/packages/presentation/`
+  (`package_types_screen` — admin defines types; `my_package_screen` — client
+  sees active package + credits/expiry + history), assign-package action
+  added to `admin_users_screen.dart`, booking-gate error prompt
+  (`NoActivePackageException → l10n.noActivePackageError`) wired into
+  `trainer_slots_screen.dart`'s existing book/reschedule error mapping.
+  Routes `/profile/package-types` (admin), `/profile/package` (all). New
+  `test/packages_ui_test.dart`.
+
+Gate: `dart analyze lib test` clean; `flutter test` **83/83** pass. Commits
+aac7b36 (F070) + eb2aa7b (F071). Seeded via Firebase MCP for live demo: 2
+package types ("10 termina" credits/60d, "Mesečna članarina" duration/30d),
+1 active credit-package assigned to the demo client (10 credits, expires
+2026-09-12) — booking now actually decrements it live.
+
+**DEFERRED:** F074–F077 (in-app card payment, payment success/failure
+handling, admin payment history) — no payment provider chosen yet, matches
+the standing "payments deferred" product decision. Package assignment is
+**admin-only** in this pass (AS-048 says "trainer/admin" — narrowed to admin
+since there's no trainer-facing client roster screen yet; revisit if the
+owner wants trainers to assign packages directly).
+
 ## 2026-07-13 — M6 Cancellation & reschedule — CORE COMPLETE (credit refund + notify deferred)
 
 Two serial workers + one fix worker under supervision:
