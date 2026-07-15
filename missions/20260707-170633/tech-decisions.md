@@ -27,8 +27,8 @@ _Pin these at install via `flutter pub add`; versions below are the current stab
 - `firebase_analytics: ^12.4.3`  <!-- same BoM; discovery Q14=a -->
 - `flutter_riverpod: ^3.3.2` — state management (compile-safe, no BuildContext coupling)  <!-- https://pub.dev/packages/flutter_riverpod -->
 - `go_router` — declarative routing + guards; pin latest at `flutter pub add go_router`  <!-- verify at connect -->
-- `table_calendar: ^3.2.0` — availability/slot calendar UI  <!-- https://pub.dev/packages/table_calendar -->
-- `fl_chart: ^1.2.0` — measurement progress charts  <!-- https://pub.dev/packages/fl_chart -->
+- ~~`table_calendar: ^3.2.0`~~ — added for the M4 slot browser, then **removed** during the M7 Kinetik design pass (2026-07-14) and replaced with a custom horizontal date-rail widget (`lib/features/scheduling/presentation/trainer_slots_screen.dart`) to match the Kinetik visual language; not in `pubspec.yaml`.
+- `fl_chart: ^1.2.0` — measurement progress charts (M12, 2026-07-15)  <!-- https://pub.dev/packages/fl_chart --> — **in active use**, resolved via `flutter pub add fl_chart` (live registry, not memory) per P-2.
 - `flutter_local_notifications: ^21.0.0` — local reminder display alongside FCM  <!-- https://pub.dev/packages/flutter_local_notifications -->
 - `google_sign_in: ^7.2.0` — Google auth for Calendar (NOTE: v7 API differs significantly from v5/v6)  <!-- https://pub.dev/packages/google_sign_in -->
 - `googleapis` + `googleapis_auth` — Google Calendar REST access; pin latest at install  <!-- https://docs.flutter.dev/data-and-backend/google-apis -->
@@ -102,6 +102,19 @@ dart analyze
 - **Errors/logging:** user-friendly messages in UI; technical errors to Crashlytics; key funnel events to Analytics.
 - **Time zones:** store timestamps in UTC; render in the studio's local time (Europe/Belgrade).
 - **Testing:** every core flow (auth, booking, cancellation, measurements) gets unit/widget tests; workers must keep `flutter test` and `flutter analyze` green before exit.
+
+## Current status (as of 2026-07-15, after M13)
+
+Planned-but-not-yet-installed libraries above are **deferred scope**, not
+oversights — see `run-log.md` for the explicit reasoning per milestone:
+
+- `firebase_storage` — deferred with progress photos (M12) and chat media (M11).
+- `firebase_messaging`, `flutter_local_notifications`, `cloud_functions` — deferred with notifications (M9); no Blaze-plan Cloud Functions yet.
+- `google_sign_in`, `googleapis`/`googleapis_auth` — deferred with Google Calendar two-way sync (M10); needs OAuth client setup the user hasn't done yet.
+- `flutter_stripe` (or any payment SDK) — deferred with in-app card payments (M8); packages are assigned manually for now.
+- `firebase_crashlytics`, `firebase_analytics` — not yet installed; no blocker, just not prioritized.
+
+In active use beyond the original stack list: `fl_chart` (M12).
 
 ## Design handoff
 
